@@ -8,7 +8,6 @@ removes wiki pages that no longer exist in handbuch/ and writes a _Sidebar.md.
 Never edit the wiki by hand.
 """
 import pathlib
-import shutil
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
