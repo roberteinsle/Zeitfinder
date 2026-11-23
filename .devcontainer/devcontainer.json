@@ -1,5 +1,5 @@
 {
-  "name": "App",
+  "name": "Zeitfinder",
   // PHP-Version = Dockerfile (ARG PHP_VERSION) = composer.json. Alle drei im selben Commit ändern.
   "image": "mcr.microsoft.com/devcontainers/php:8.5-bookworm",
   "features": {

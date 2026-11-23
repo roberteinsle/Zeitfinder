@@ -1,0 +1,15 @@
+{
+    "Invalid credential format.": "Ungültiges Passkey-Format.",
+    "Passkey registration session expired. Please try again.": "Die Passkey-Einrichtung ist abgelaufen. Bitte versuche es erneut.",
+    "Passkey verification session expired. Please try again.": "Die Passkey-Prüfung ist abgelaufen. Bitte versuche es erneut.",
+    "Unable to verify passkey. Please try again.": "Der Passkey konnte nicht geprüft werden. Bitte versuche es erneut.",
+    "Passkey not recognized. It may have been removed from your account.": "Dieser Passkey ist unbekannt. Vielleicht wurde er aus dem Konto entfernt.",
+    "Unable to sign in with this account.": "Mit diesem Konto ist keine Anmeldung möglich.",
+    "Too Many Requests": "Zu viele Anfragen",
+    "Not Found": "Nicht gefunden",
+    "Forbidden": "Kein Zugriff",
+    "Page Expired": "Seite abgelaufen",
+    "Server Error": "Serverfehler",
+    "Service Unavailable": "Vorübergehend nicht verfügbar",
+    "Unauthorized": "Nicht angemeldet"
+}

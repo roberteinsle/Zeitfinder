@@ -1,0 +1,126 @@
+@import 'tailwindcss';
+
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../js/**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-brand-50: oklch(0.97 0.02 275);
+    --color-brand-100: oklch(0.94 0.04 275);
+    --color-brand-200: oklch(0.88 0.08 275);
+    --color-brand-300: oklch(0.80 0.12 275);
+    --color-brand-400: oklch(0.70 0.17 275);
+    --color-brand-500: oklch(0.60 0.21 275);
+    --color-brand-600: oklch(0.52 0.22 275);
+    --color-brand-700: oklch(0.45 0.20 275);
+    --color-brand-800: oklch(0.38 0.16 275);
+    --color-brand-900: oklch(0.30 0.12 275);
+}
+
+@layer base {
+    html {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        @apply bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100;
+    }
+
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-brand-500;
+    }
+}
+
+@utility btn {
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition select-none disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+@layer components {
+    .card {
+        @apply rounded-2xl border border-zinc-200/80 bg-white shadow-sm shadow-zinc-900/5 dark:border-zinc-800 dark:bg-zinc-900;
+    }
+
+    .btn-primary {
+        @apply btn bg-brand-600 text-white shadow-sm shadow-brand-600/30 hover:bg-brand-700 active:scale-[.98];
+    }
+
+    .btn-secondary {
+        @apply btn border border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800;
+    }
+
+    .btn-ghost {
+        @apply btn text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white;
+    }
+
+    .btn-danger {
+        @apply btn border border-red-200 bg-white text-red-700 hover:bg-red-50 dark:border-red-900 dark:bg-zinc-900 dark:text-red-400 dark:hover:bg-red-950;
+    }
+
+    .label {
+        @apply mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300;
+    }
+
+    .input {
+        @apply block min-h-11 w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-base text-zinc-900 shadow-xs placeholder:text-zinc-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15 focus:outline-none sm:text-sm dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100;
+    }
+
+    .input-error {
+        @apply border-red-400 focus:border-red-500 focus:ring-red-500/15;
+    }
+
+    .field-error {
+        @apply mt-1.5 text-sm text-red-600 dark:text-red-400;
+    }
+
+    .checkbox {
+        @apply size-5 rounded-md border-zinc-300 text-brand-600 accent-brand-600;
+    }
+
+    /* Three-state vote control (yes / maybe / no) built on radio inputs, no JS. */
+    .vote-choice {
+        @apply relative flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg px-1.5 text-[13px] whitespace-nowrap sm:gap-1.5 sm:px-2 sm:text-sm font-medium text-zinc-500 transition select-none hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100;
+    }
+
+    .vote-choice input {
+        @apply sr-only;
+    }
+
+    .vote-choice:has(input:focus-visible) {
+        @apply outline-2 outline-offset-1 outline-brand-500;
+    }
+
+    .vote-choice.yes:has(input:checked) {
+        @apply bg-emerald-500 text-white shadow-sm;
+    }
+
+    .vote-choice.maybe:has(input:checked) {
+        @apply bg-amber-400 text-amber-950 shadow-sm;
+    }
+
+    .vote-choice.no:has(input:checked) {
+        @apply bg-zinc-700 text-white shadow-sm dark:bg-zinc-600;
+    }
+
+    .cell-yes {
+        @apply bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300;
+    }
+
+    .cell-maybe {
+        @apply bg-amber-100 text-amber-700 dark:bg-amber-400/20 dark:text-amber-300;
+    }
+
+    .cell-no {
+        @apply bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500;
+    }
+
+    .alert-success {
+        @apply rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-200;
+    }
+
+    .alert-error {
+        @apply rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/60 dark:text-red-200;
+    }
+}

@@ -4,10 +4,10 @@ name: Build & Push
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
     tags: ['v*']
   pull_request:
-    branches: [main]
+    branches: [main, master]
   schedule:
     - cron: '17 4 * * 1'   # wöchentlich: neueste PHP-Patches und neue Schwachstellenmeldungen
   workflow_dispatch:
@@ -172,7 +172,7 @@ jobs:
       # Optional: Coolify nach erfolgreichem Push anstoßen (Repo-Variable AUTO_DEPLOY=true,
       # Secrets COOLIFY_WEBHOOK und COOLIFY_TOKEN). Sonst in Coolify von Hand auf Deploy klicken.
       - name: Coolify-Deploy auslösen
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.AUTO_DEPLOY == 'true'
+        if: github.ref_name == github.event.repository.default_branch && github.event_name != 'pull_request' && vars.AUTO_DEPLOY == 'true'
         run: |
           curl -fsS -X POST "${{ secrets.COOLIFY_WEBHOOK }}" \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"

@@ -1,15 +1,16 @@
-# <App-Name>
+# Zeitfinder
 
-<Kurzbeschreibung in einem Satz.>
+A fast, mobile-friendly scheduling poll app: propose dates, share a link, everyone answers Yes / No / If need be, fix the final date and notify everybody. No account needed; optional sign-in via magic link, passkey or password with TOTP.
 
-## Schnellstart
+## Quick start
 
-1. Codespace öffnen (Code → Codespaces → Create codespace on main).
-2. Nur beim ersten Mal: `bin/init-laravel.sh`
-3. `php artisan serve` und in einem zweiten Terminal `npm run dev`
+1. Open a Codespace (Code → Codespaces → Create codespace on main).
+2. `php artisan migrate`
+3. `php artisan serve` and in a second terminal `npm run dev`
+4. Tests: `vendor/bin/pest` (PostgreSQL, database `app_test`)
 
-Details stehen im Handbuch (`handbuch/`, Quelle des Wikis).
+Details are in the handbook (`handbuch/`, source of the wiki).
 
-## Betrieb
+## Operations
 
-GitHub Actions baut das Image und schiebt es nach GHCR, Coolify holt es nur (`deploy/docker-compose.coolify.yml`). PostgreSQL ist eine eigene Coolify-Ressource.
+GitHub Actions builds the image and pushes it to GHCR; Coolify only pulls it (`deploy/docker-compose.coolify.yml`). PostgreSQL is a separate Coolify resource. Set `APP_URL`, `ADMIN_EMAIL` and the `MAIL_*` variables in Coolify.
