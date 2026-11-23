@@ -4,7 +4,8 @@
   "image": "mcr.microsoft.com/devcontainers/php:8.5-bookworm",
   "features": {
     "ghcr.io/devcontainers/features/node:1": { "version": "22" },
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "forwardPorts": [8000, 5173, 5432],
   "portsAttributes": {
