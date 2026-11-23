@@ -4,7 +4,7 @@
     @if (session('suggest_passkey'))
         <div class="card mb-8 flex flex-col gap-4 border-brand-200 bg-brand-50 p-5 sm:flex-row sm:items-center sm:justify-between dark:border-brand-900 dark:bg-brand-950/50" data-passkey-scope data-passkey-supported hidden>
             <div>
-                <p class="flex items-center gap-2 font-semibold"><x-glyph name="key" class="size-5 text-brand-600" />{{ __('Nächstes Mal ohne E-Mail anmelden?') }}</p>
+                <p class="flex items-center gap-2 font-semibold"><x-glyph name="key" class="size-5 text-ink" />{{ __('Nächstes Mal ohne E-Mail anmelden?') }}</p>
                 <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{{ __('Richte einen Passkey ein – Anmeldung per Face ID oder Fingerabdruck in einer Sekunde.') }}</p>
                 <p class="field-error" data-passkey-error hidden></p>
             </div>
@@ -15,7 +15,7 @@
     <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
             <p class="text-sm text-zinc-500">{{ __('Angemeldet als') }}</p>
-            <h1 class="text-3xl font-semibold tracking-tight">{{ $user->name }}</h1>
+            <h1 class="text-3xl font-medium tracking-tight">{{ $user->name }}</h1>
             <p class="text-sm text-zinc-500">{{ $user->email }}</p>
         </div>
         <div class="mt-3 flex gap-2 sm:mt-0">

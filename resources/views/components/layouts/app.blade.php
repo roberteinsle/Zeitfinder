@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#141112" media="(prefers-color-scheme: dark)">
     <meta name="robots" content="{{ $robots ?? 'noindex' }}">
     <title>{{ isset($title) ? $title.' · ' : '' }}Zeitfinder</title>
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
@@ -29,7 +30,7 @@
                 @auth
                     <a href="{{ route('account.security') }}" class="btn-ghost hidden sm:inline-flex" title="{{ __('Sicherheit') }}"><x-glyph name="cog" /><span class="sr-only">{{ __('Sicherheit') }}</span></a>
                     <a href="{{ route('account') }}" class="btn-ghost" title="{{ __('Konto') }}">
-                        <span class="grid size-8 place-items-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 dark:bg-brand-900 dark:text-brand-200">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
+                        <span class="grid size-8 place-items-center rounded-full bg-brand-100 text-sm font-semibold text-ink dark:bg-brand-900">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
                         <span class="sr-only">{{ __('Konto') }}</span>
                     </a>
                 @else
@@ -54,9 +55,9 @@
     <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg sm:hidden dark:border-zinc-800 dark:bg-zinc-950/95" aria-label="{{ __('Hauptnavigation') }}">
         <div class="grid grid-cols-3">
             @php $tab = 'flex flex-col items-center gap-1 py-2.5 text-xs font-medium'; @endphp
-            <a href="{{ route('home') }}" class="{{ $tab }} {{ request()->routeIs('home') ? 'text-brand-600 dark:text-brand-400' : 'text-zinc-500' }}"><x-glyph name="home" class="size-6" />{{ __('Start') }}</a>
-            <a href="{{ route('polls.create') }}" class="{{ $tab }} {{ request()->routeIs('polls.create') ? 'text-brand-600 dark:text-brand-400' : 'text-zinc-500' }}"><x-glyph name="plus" class="size-6" />{{ __('Neu') }}</a>
-            <a href="{{ auth()->check() ? route('account') : route('login') }}" class="{{ $tab }} {{ request()->routeIs('account*', 'login') ? 'text-brand-600 dark:text-brand-400' : 'text-zinc-500' }}"><x-glyph name="user" class="size-6" />{{ auth()->check() ? __('Konto') : __('Anmelden') }}</a>
+            <a href="{{ route('home') }}" class="{{ $tab }} {{ request()->routeIs('home') ? 'text-ink' : 'text-zinc-500' }}"><x-glyph name="home" class="size-6" />{{ __('Start') }}</a>
+            <a href="{{ route('polls.create') }}" class="{{ $tab }} {{ request()->routeIs('polls.create') ? 'text-ink' : 'text-zinc-500' }}"><x-glyph name="plus" class="size-6" />{{ __('Neu') }}</a>
+            <a href="{{ auth()->check() ? route('account') : route('login') }}" class="{{ $tab }} {{ request()->routeIs('account*', 'login') ? 'text-ink' : 'text-zinc-500' }}"><x-glyph name="user" class="size-6" />{{ auth()->check() ? __('Konto') : __('Anmelden') }}</a>
         </div>
     </nav>
 </body>

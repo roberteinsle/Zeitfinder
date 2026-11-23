@@ -1,6 +1,6 @@
 <x-layouts.app :title="__('Neue Umfrage')">
     <div class="mx-auto max-w-3xl">
-        <h1 class="text-3xl font-semibold tracking-tight">{{ __('Neue Umfrage') }}</h1>
+        <h1 class="text-3xl font-medium tracking-tight">{{ __('Neue Umfrage') }}</h1>
         <p class="mt-2 text-zinc-600 dark:text-zinc-400">{{ __('Schlage Termine vor und teile anschließend den Link.') }}</p>
 
         <form method="POST" action="{{ route('polls.store') }}" class="mt-8 space-y-6" novalidate>
@@ -11,7 +11,7 @@
             @endif
 
             <section class="card space-y-5 p-5 sm:p-6">
-                <h2 class="text-lg font-semibold">{{ __('Worum geht es?') }}</h2>
+                <h2 class="text-lg font-medium">{{ __('Worum geht es?') }}</h2>
                 <div>
                     <label for="title" class="label">{{ __('Titel') }}</label>
                     <input id="title" name="title" type="text" maxlength="120" required autofocus value="{{ old('title') }}"
@@ -35,7 +35,7 @@
 
             <section class="card p-5 sm:p-6">
                 <div class="mb-4 flex items-baseline justify-between">
-                    <h2 class="text-lg font-semibold">{{ __('Terminvorschläge') }}</h2>
+                    <h2 class="text-lg font-medium">{{ __('Terminvorschläge') }}</h2>
                     <span class="text-sm text-zinc-500"><span data-option-count>0</span> {{ __('Termine') }}</span>
                 </div>
                 @include('polls.partials.option-rows', ['name' => 'options', 'rows' => old('options', []), 'minOne' => true])
@@ -43,7 +43,7 @@
             </section>
 
             <section class="card space-y-5 p-5 sm:p-6">
-                <h2 class="text-lg font-semibold">{{ __('Über dich') }}</h2>
+                <h2 class="text-lg font-medium">{{ __('Über dich') }}</h2>
                 @auth
                     <div>
                         <label for="organizer_name" class="label">{{ __('Dein Name') }}</label>
@@ -82,7 +82,7 @@
             </section>
 
             <div class="sticky bottom-20 z-10 sm:static">
-                <button type="submit" class="btn-primary min-h-12 w-full text-base shadow-lg sm:w-auto sm:px-8">{{ __('Umfrage erstellen') }} <x-glyph name="arrow-right" class="size-4" /></button>
+                <button type="submit" class="btn-primary min-h-12 w-full text-base sm:w-auto sm:px-8">{{ __('Umfrage erstellen') }} <x-glyph name="arrow-right" class="size-4" /></button>
             </div>
         </form>
     </div>

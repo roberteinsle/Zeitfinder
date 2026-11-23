@@ -1,8 +1,8 @@
 <x-layouts.app :title="__('Umfrage bereit')">
     <div class="mx-auto max-w-2xl">
         <div class="card p-6 text-center sm:p-10">
-            <span class="mx-auto grid size-14 place-items-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300"><x-glyph name="check" class="size-7" /></span>
-            <h1 class="mt-5 text-2xl font-semibold tracking-tight sm:text-3xl">{{ __('Deine Umfrage ist bereit!') }}</h1>
+            <span class="mx-auto grid size-14 place-items-center rounded-full bg-success-100 text-success-600 dark:bg-success-500/20 dark:text-success-300"><x-glyph name="check" class="size-7" /></span>
+            <h1 class="mt-5 text-2xl font-medium tracking-tight sm:text-3xl">{{ __('Deine Umfrage ist bereit!') }}</h1>
             <p class="mt-2 text-zinc-600 dark:text-zinc-400">{{ __('Teile diesen Link mit allen, die mitmachen sollen.') }}</p>
 
             <div class="mt-6 flex flex-col gap-2 sm:flex-row">
@@ -16,7 +16,7 @@
         </div>
 
         <div class="card mt-6 p-6">
-            <h2 class="flex items-center gap-2 font-semibold"><x-glyph name="lock" class="size-5 text-brand-600" />{{ __('Dein Verwaltungslink') }}</h2>
+            <h2 class="flex items-center gap-2 font-medium"><x-glyph name="lock" class="size-5 text-ink" />{{ __('Dein Verwaltungslink') }}</h2>
             <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{{ __('Damit bearbeitest du die Umfrage und legst den finalen Termin fest. Nicht weitergeben! Wir haben ihn dir auch per E-Mail geschickt.') }}</p>
             @if ($adminUrl)
                 <div class="mt-4 flex flex-col gap-2 sm:flex-row">

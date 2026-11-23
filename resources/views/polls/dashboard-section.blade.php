@@ -1,7 +1,7 @@
 @php use App\Support\DisplayTime; @endphp
 <section>
     <div class="flex items-center justify-between gap-4">
-        <h2 class="text-xl font-semibold">{{ __('Meine Umfragen') }}</h2>
+        <h2 class="text-xl font-medium">{{ __('Meine Umfragen') }}</h2>
         <a href="{{ route('polls.create') }}" class="btn-primary"><x-glyph name="plus" class="size-4" />{{ __('Neue Umfrage') }}</a>
     </div>
 
@@ -18,8 +18,8 @@
                             <p class="font-semibold break-words">{{ $poll->title }}</p>
                             <span @class([
                                 'shrink-0 rounded-full px-2 py-0.5 text-xs font-medium',
-                                'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300' => $poll->isFinalized(),
-                                'bg-brand-50 text-brand-700 dark:bg-brand-900/60 dark:text-brand-200' => $poll->isOpen(),
+                                'bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300' => $poll->isFinalized(),
+                                'bg-brand-50 text-ink dark:bg-brand-900/60' => $poll->isOpen(),
                             ])>{{ $poll->status->label() }}</span>
                         </div>
                         <p class="mt-1 text-sm text-zinc-500">{{ trans_choice(':count Teilnahme|:count Teilnahmen', $poll->participants_count, ['count' => $poll->participants_count]) }} · {{ __('erstellt :date', ['date' => DisplayTime::date($poll->created_at ?? now())]) }}</p>
@@ -30,7 +30,7 @@
     @endif
 
     @if ($participations->isNotEmpty())
-        <h2 class="mt-10 text-xl font-semibold">{{ __('Hier habe ich abgestimmt') }}</h2>
+        <h2 class="mt-10 text-xl font-medium">{{ __('Hier habe ich abgestimmt') }}</h2>
         <ul class="mt-4 grid gap-3 sm:grid-cols-2">
             @foreach ($participations as $participation)
                 <li>

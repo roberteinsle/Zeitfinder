@@ -2,13 +2,13 @@
 <x-layouts.app :title="__('Sicherheit')">
     <div class="mx-auto max-w-2xl">
         <a href="{{ route('account') }}" class="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200">← {{ __('Konto') }}</a>
-        <h1 class="mt-2 text-3xl font-semibold tracking-tight">{{ __('Sicherheit') }}</h1>
+        <h1 class="mt-2 text-3xl font-medium tracking-tight">{{ __('Sicherheit') }}</h1>
 
         <div class="mt-6"><x-flash /></div>
 
         {{-- Profile --}}
         <section class="card p-5 sm:p-6">
-            <h2 class="font-semibold">{{ __('Profil') }}</h2>
+            <h2 class="font-medium">{{ __('Profil') }}</h2>
             <form method="POST" action="{{ route('account.profile') }}" class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
                 @csrf @method('PUT')
                 <div class="flex-1">
@@ -22,7 +22,7 @@
 
         {{-- Passkeys --}}
         <section class="card mt-6 p-5 sm:p-6" data-passkey-scope>
-            <h2 class="flex items-center gap-2 font-semibold"><x-glyph name="key" class="size-5 text-brand-600" />{{ __('Passkeys') }}</h2>
+            <h2 class="flex items-center gap-2 font-medium"><x-glyph name="key" class="size-5 text-ink" />{{ __('Passkeys') }}</h2>
             <p class="mt-1 text-sm text-zinc-500">{{ __('Anmelden per Face ID, Fingerabdruck, PIN oder Sicherheitsschlüssel.') }} @if ($user->is_admin){{ __('Für den Admin-Bereich ist ein Passkey Pflicht.') }}@endif</p>
 
             @if ($passkeys->isNotEmpty())
@@ -35,7 +35,7 @@
                             </div>
                             <form method="POST" action="{{ route('passkey.destroy', $passkey) }}" data-confirm="{{ __('Passkey entfernen?') }}">
                                 @csrf @method('DELETE')
-                                <button class="btn-ghost size-10 p-0 text-zinc-400 hover:text-red-600" title="{{ __('Entfernen') }}"><x-glyph name="trash" class="size-4" /><span class="sr-only">{{ __('Entfernen') }}</span></button>
+                                <button class="btn-ghost size-10 p-0 text-zinc-400 hover:text-danger-600" title="{{ __('Entfernen') }}"><x-glyph name="trash" class="size-4" /><span class="sr-only">{{ __('Entfernen') }}</span></button>
                             </form>
                         </li>
                     @endforeach
@@ -52,10 +52,10 @@
 
         {{-- Password + TOTP --}}
         <section class="card mt-6 p-5 sm:p-6" id="passwort">
-            <h2 class="flex items-center gap-2 font-semibold"><x-glyph name="lock" class="size-5 text-brand-600" />{{ __('Passwort mit Zwei-Faktor-Code') }}</h2>
+            <h2 class="flex items-center gap-2 font-medium"><x-glyph name="lock" class="size-5 text-ink" />{{ __('Passwort mit Zwei-Faktor-Code') }}</h2>
 
             @if ($user->hasPasswordLogin())
-                <p class="mt-2 text-sm text-emerald-700 dark:text-emerald-400">{{ __('Aktiv. Bei der Anmeldung mit Passwort fragen wir immer nach einem Code aus deiner Authenticator-App.') }}</p>
+                <p class="mt-2 text-sm text-success-700 dark:text-success-400">{{ __('Aktiv. Bei der Anmeldung mit Passwort fragen wir immer nach einem Code aus deiner Authenticator-App.') }}</p>
                 <form method="POST" action="{{ route('account.password.disable') }}" class="mt-4" data-confirm="{{ __('Anmeldung mit Passwort deaktivieren?') }}">
                     @csrf @method('DELETE')
                     <button class="btn-danger">{{ __('Deaktivieren') }}</button>

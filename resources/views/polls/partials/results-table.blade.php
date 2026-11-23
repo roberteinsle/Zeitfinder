@@ -14,7 +14,7 @@
                         <th scope="col" @class([
                             'min-w-20 border-b border-zinc-200 px-2 py-3 text-center font-normal dark:border-zinc-800',
                             'bg-brand-50 dark:bg-brand-950/60' => $results->isBest($option) && ! $finalId,
-                            'bg-emerald-50 dark:bg-emerald-950/60' => $finalId === $option->id,
+                            'bg-success-50 dark:bg-success-950/60' => $finalId === $option->id,
                         ])>
                             <span class="block text-xs font-semibold text-zinc-500 uppercase">{{ DisplayTime::weekday($option->starts_at) }}</span>
                             <span class="block font-semibold text-zinc-900 dark:text-zinc-100">{{ DisplayTime::date($option->starts_at) }}</span>
@@ -31,7 +31,7 @@
                             <span class="flex items-center gap-2">
                                 <span class="hidden size-7 shrink-0 place-items-center rounded-full sm:grid bg-zinc-100 text-xs font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{{ $participant->initials() }}</span>
                                 <span class="max-w-24 truncate sm:max-w-40">{{ $participant->name }}</span>
-                                @if ($isMe)<span class="text-xs font-normal text-brand-600 dark:text-brand-400">({{ __('du') }})</span>@endif
+                                @if ($isMe)<span class="text-xs font-normal text-ink">({{ __('du') }})</span>@endif
                             </span>
                         </th>
                         @foreach ($poll->options as $option)
@@ -54,9 +54,9 @@
                     <th scope="row" class="sticky left-0 z-10 bg-zinc-50 px-4 py-3 text-left font-semibold dark:bg-zinc-950">{{ __('Summe') }}</th>
                     @foreach ($poll->options as $option)
                         @php $c = $results->counts[$option->id]; @endphp
-                        <td @class(['bg-zinc-50 px-2 py-3 text-center dark:bg-zinc-950', 'font-semibold text-brand-700 dark:text-brand-300' => $results->isBest($option)])>
-                            <span class="block text-emerald-600 dark:text-emerald-400">✓ {{ $c['yes'] }}</span>
-                            @if ($poll->allow_maybe)<span class="block text-xs text-amber-600 dark:text-amber-400">~ {{ $c['maybe'] }}</span>@endif
+                        <td @class(['bg-zinc-50 px-2 py-3 text-center dark:bg-zinc-950', 'font-semibold text-ink' => $results->isBest($option)])>
+                            <span class="block text-success-600 dark:text-success-400">✓ {{ $c['yes'] }}</span>
+                            @if ($poll->allow_maybe)<span class="block text-xs text-maybe-600 dark:text-maybe-400">~ {{ $c['maybe'] }}</span>@endif
                             @if ($results->isBest($option))<span class="block text-xs">★</span>@endif
                         </td>
                     @endforeach

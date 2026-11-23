@@ -1,7 +1,7 @@
 <x-layouts.app :title="__('Zwei-Faktor-Code')">
     <div class="mx-auto max-w-md">
         <div class="card p-6 sm:p-8">
-            <h1 class="text-2xl font-semibold">{{ __('Zwei-Faktor-Code') }}</h1>
+            <h1 class="text-2xl font-medium">{{ __('Zwei-Faktor-Code') }}</h1>
             <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{{ __('Gib den 6-stelligen Code aus deiner Authenticator-App ein.') }}</p>
             <form method="POST" action="{{ route('login.two-factor.verify') }}" class="mt-6 space-y-4">
                 @csrf

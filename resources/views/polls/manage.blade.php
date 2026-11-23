@@ -8,8 +8,8 @@
 
     <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div class="min-w-0">
-            <p class="text-sm font-medium text-brand-600 dark:text-brand-400">{{ __('Umfrage verwalten') }}</p>
-            <h1 class="mt-1 text-3xl font-semibold tracking-tight break-words">{{ $poll->title }}</h1>
+            <p class="text-sm font-medium text-ink">{{ __('Umfrage verwalten') }}</p>
+            <h1 class="mt-1 text-3xl font-medium tracking-tight break-words">{{ $poll->title }}</h1>
             <p class="mt-2 text-sm text-zinc-500">{{ $poll->status->label() }} · {{ trans_choice(':count Teilnahme|:count Teilnahmen', $participantCount, ['count' => $participantCount]) }}</p>
         </div>
         <a href="{{ route('polls.show', $poll) }}" class="btn-secondary shrink-0">{{ __('Zur Umfrage') }}</a>
@@ -25,33 +25,33 @@
         {{-- Finalize --}}
         <section class="card p-5 sm:p-6 lg:col-span-3">
             @if ($poll->isFinalized() && $poll->finalOption)
-                <h2 class="text-lg font-semibold">{{ __('Der Termin steht fest') }}</h2>
-                <p class="mt-3 text-2xl font-semibold text-emerald-600 dark:text-emerald-400">{{ $poll->finalOption->fullLabel() }}</p>
+                <h2 class="text-lg font-medium">{{ __('Der Termin steht fest') }}</h2>
+                <p class="mt-3 text-2xl font-semibold text-success-600 dark:text-success-400">{{ $poll->finalOption->fullLabel() }}</p>
                 <p class="mt-1 text-sm text-zinc-500">{{ __('Festgelegt am :date. Alle Teilnehmenden wurden per E-Mail informiert.', ['date' => DisplayTime::dateTime($poll->finalized_at ?? now())]) }}</p>
                 <form method="POST" action="{{ route('polls.reopen', $poll) }}" class="mt-5" data-confirm="{{ __('Abstimmung wieder öffnen? Der festgelegte Termin wird zurückgenommen.') }}">
                     @csrf
                     <button class="btn-secondary">{{ __('Abstimmung wieder öffnen') }}</button>
                 </form>
             @else
-                <h2 class="text-lg font-semibold">{{ __('Finalen Termin festlegen') }}</h2>
+                <h2 class="text-lg font-medium">{{ __('Finalen Termin festlegen') }}</h2>
                 <p class="mt-1 text-sm text-zinc-500">{{ __('Sortiert nach Zusagen. Nach dem Festlegen bekommen alle eine E-Mail mit Kalendereintrag.') }}</p>
                 <form method="POST" action="{{ route('polls.finalize', $poll) }}" class="mt-4" data-confirm="{{ __('Diesen Termin festlegen und alle benachrichtigen?') }}">
                     @csrf
                     <div class="space-y-2">
                         @foreach ($ranked as $i => $option)
                             @php $c = $results->counts[$option->id]; @endphp
-                            <label @class(['flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50 dark:has-[:checked]:bg-brand-950/50', 'border-zinc-200 dark:border-zinc-800'])>
-                                <input type="radio" name="option_id" value="{{ $option->id }}" class="size-4 accent-brand-600" @checked($i === 0) required>
+                            <label @class(['flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition has-[:checked]:border-ink has-[:checked]:bg-brand-50 dark:has-[:checked]:bg-brand-950/50', 'border-zinc-200 dark:border-zinc-800'])>
+                                <input type="radio" name="option_id" value="{{ $option->id }}" class="size-4 accent-ink" @checked($i === 0) required>
                                 <span class="flex-1">
                                     <span class="block font-medium">{{ DisplayTime::weekday($option->starts_at) }}, {{ DisplayTime::date($option->starts_at) }} · {{ $option->timeLabel() }}</span>
                                     <span class="block text-sm text-zinc-500">
-                                        <span class="text-emerald-600 dark:text-emerald-400">{{ $c['yes'] }} {{ __('Ja') }}</span>
-                                        @if ($poll->allow_maybe) · <span class="text-amber-600 dark:text-amber-400">{{ $c['maybe'] }} {{ __('wenn nötig') }}</span>@endif
+                                        <span class="text-success-600 dark:text-success-400">{{ $c['yes'] }} {{ __('Ja') }}</span>
+                                        @if ($poll->allow_maybe) · <span class="text-maybe-600 dark:text-maybe-400">{{ $c['maybe'] }} {{ __('wenn nötig') }}</span>@endif
                                         · {{ $c['no'] }} {{ __('Nein') }}
                                     </span>
                                 </span>
                                 @if ($results->isBest($option))
-                                    <span class="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-brand-700 dark:bg-brand-900 dark:text-brand-200">★ {{ __('Top') }}</span>
+                                    <span class="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-ink dark:bg-brand-900">★ {{ __('Top') }}</span>
                                 @endif
                             </label>
                         @endforeach
@@ -63,7 +63,7 @@
 
         {{-- Participants --}}
         <section class="card p-5 sm:p-6 lg:col-span-2">
-            <h2 class="text-lg font-semibold">{{ __('Teilnehmende') }}</h2>
+            <h2 class="text-lg font-medium">{{ __('Teilnehmende') }}</h2>
             @if ($participantCount === 0)
                 <p class="mt-3 text-sm text-zinc-500">{{ __('Noch niemand hat abgestimmt.') }}</p>
             @else
@@ -76,7 +76,7 @@
                             </div>
                             <form method="POST" action="{{ route('polls.participants.destroy', [$poll, $participant]) }}" data-confirm="{{ __(':name entfernen?', ['name' => $participant->name]) }}">
                                 @csrf @method('DELETE')
-                                <button class="btn-ghost size-10 p-0 text-zinc-400 hover:text-red-600" title="{{ __('Entfernen') }}"><x-glyph name="trash" class="size-4" /><span class="sr-only">{{ __('Entfernen') }}</span></button>
+                                <button class="btn-ghost size-10 p-0 text-zinc-400 hover:text-danger-600" title="{{ __('Entfernen') }}"><x-glyph name="trash" class="size-4" /><span class="sr-only">{{ __('Entfernen') }}</span></button>
                             </form>
                         </li>
                     @endforeach
@@ -87,14 +87,14 @@
 
     @if ($participantCount > 0)
         <section class="mt-8">
-            <h2 class="text-xl font-semibold">{{ __('Übersicht') }}</h2>
+            <h2 class="text-xl font-medium">{{ __('Übersicht') }}</h2>
             @include('polls.partials.results-table', ['poll' => $poll, 'results' => $results, 'me' => null])
         </section>
     @endif
 
     {{-- Edit --}}
     <section class="mt-10">
-        <h2 class="text-xl font-semibold">{{ __('Umfrage bearbeiten') }}</h2>
+        <h2 class="text-xl font-medium">{{ __('Umfrage bearbeiten') }}</h2>
         <form method="POST" action="{{ route('polls.manage.update', $poll) }}" class="mt-4 space-y-6" novalidate>
             @csrf @method('PUT')
 
@@ -129,14 +129,14 @@
             </div>
 
             <div class="card p-5 sm:p-6">
-                <h3 class="font-semibold">{{ __('Termine') }}</h3>
+                <h3 class="font-medium">{{ __('Termine') }}</h3>
                 <ul class="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
                     @foreach ($poll->options as $option)
                         <li class="flex items-center justify-between gap-3 py-2">
                             <span>{{ $option->fullLabel() }}</span>
                             @if ($poll->final_option_id !== $option->id)
-                                <label class="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
-                                    <input type="checkbox" name="remove_options[]" value="{{ $option->id }}" class="checkbox accent-red-600">
+                                <label class="flex items-center gap-2 text-sm text-danger-600 dark:text-danger-400">
+                                    <input type="checkbox" name="remove_options[]" value="{{ $option->id }}" class="checkbox accent-danger-600">
                                     {{ __('entfernen') }}
                                 </label>
                             @endif
@@ -145,7 +145,7 @@
                 </ul>
                 <x-field-error name="new_options" />
 
-                <h3 class="mt-6 mb-3 font-semibold">{{ __('Termine hinzufügen') }}</h3>
+                <h3 class="mt-6 mb-3 font-medium">{{ __('Termine hinzufügen') }}</h3>
                 @include('polls.partials.option-rows', ['name' => 'new_options', 'rows' => old('new_options', []), 'minOne' => false])
             </div>
 
@@ -153,8 +153,8 @@
         </form>
     </section>
 
-    <section class="mt-12 rounded-2xl border border-red-200 p-5 sm:p-6 dark:border-red-900">
-        <h2 class="font-semibold text-red-700 dark:text-red-400">{{ __('Umfrage löschen') }}</h2>
+    <section class="mt-12 rounded-2xl border border-danger-200 p-5 sm:p-6 dark:border-danger-900">
+        <h2 class="font-medium text-danger-700 dark:text-danger-400">{{ __('Umfrage löschen') }}</h2>
         <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{{ __('Löscht die Umfrage mit allen Antworten. Das lässt sich nicht rückgängig machen.') }}</p>
         <form method="POST" action="{{ route('polls.destroy', $poll) }}" class="mt-4" data-confirm="{{ __('Umfrage endgültig löschen?') }}">
             @csrf @method('DELETE')

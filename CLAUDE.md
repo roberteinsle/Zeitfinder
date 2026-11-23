@@ -43,6 +43,7 @@ Rules that are easy to break:
 - Links in mails come from `route()` with the forced root URL (`APP_URL`); never build URLs from the request host.
 - Public pages must work under the strict nonce CSP: no inline scripts, no inline `style` attributes, no external resources. Use `resources/js/*` with `data-*` hooks.
 - Do not mix inline `@php(...)` with `@php … @endphp` blocks in one Blade file (compiles wrongly); use block form.
+- Design tokens live in `resources/css/app.css`: text, icons and primary buttons use `ink`/`paper` (black/white, inverted in dark mode); colour areas use the muted secondary palette (`sage`, `blush`, `lavender`, `mist`, …) with ink text on top; votes use `success`/`maybe`/`danger`; `zinc` is redefined as warm grey. No gradients or coloured shadows. Fonts are self-hosted via `@fontsource-variable` (Jost for headings, Source Sans 3 for text).
 - Our icon component is `<x-glyph>`; `<x-icon>` belongs to blade-icons (Filament).
 - Every new route needs a rate limiter; vendor routes outside `web` get `throttle:global` automatically (`AppServiceProvider`).
 - `trustHosts()` in `bootstrap/app.php` must keep trusting `localhost`: the container health check calls `http://localhost:8080/up`, and a 400 there takes the app offline (503 from Coolify). The middleware is skipped in tests, so `TrustedHostsTest` checks the patterns directly.

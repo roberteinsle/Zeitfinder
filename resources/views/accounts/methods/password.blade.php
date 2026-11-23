@@ -1,6 +1,6 @@
 <details class="card group p-5 sm:p-6" @if ($errors->has('password')) open @endif>
     <summary class="flex cursor-pointer list-none items-center justify-between font-semibold">
-        <span class="flex items-center gap-2"><x-glyph name="lock" class="size-5 text-brand-600" />{{ __('Mit Passwort und Zwei-Faktor-Code') }}</span>
+        <span class="flex items-center gap-2"><x-glyph name="lock" class="size-5 text-ink" />{{ __('Mit Passwort und Zwei-Faktor-Code') }}</span>
         <span class="text-zinc-400 transition group-open:rotate-90">›</span>
     </summary>
     <form method="POST" action="{{ route('login.password') }}" class="mt-4 space-y-3">

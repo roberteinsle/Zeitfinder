@@ -1,5 +1,5 @@
 <section class="card p-5 sm:p-6">
-    <h2 class="flex items-center gap-2 font-semibold"><x-glyph name="mail" class="size-5 text-brand-600" />{{ __('Per E-Mail-Link') }}</h2>
+    <h2 class="flex items-center gap-2 font-medium"><x-glyph name="mail" class="size-5 text-ink" />{{ __('Per E-Mail-Link') }}</h2>
     <form method="POST" action="{{ route('magic-link.request') }}" class="mt-4 space-y-3">
         @csrf
         <div>

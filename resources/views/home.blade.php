@@ -1,45 +1,58 @@
 <x-layouts.app robots="index,follow">
     <x-flash />
 
-    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 px-6 py-14 text-white shadow-xl shadow-brand-900/20 sm:px-12 sm:py-20">
-        <div class="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-white/10 blur-3xl"></div>
-        <div class="pointer-events-none absolute -bottom-32 -left-16 size-80 rounded-full bg-fuchsia-400/20 blur-3xl"></div>
-
-        <div class="relative max-w-2xl">
-            <p class="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm font-medium backdrop-blur">
-                <x-glyph name="check" class="size-4" /> {{ __('Kostenlos · ohne Konto · ohne Werbung') }}
-            </p>
-            <h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{{ __('Den passenden Termin finden – ohne Hin und Her.') }}</h1>
-            <p class="mt-5 text-lg text-brand-100 text-pretty">{{ __('Termine vorschlagen, Link teilen, alle kreuzen an. Du siehst sofort, wann es am besten passt.') }}</p>
+    <section class="grid gap-10 rounded-3xl bg-zinc-100 px-6 py-12 sm:px-12 sm:py-16 lg:grid-cols-[1fr_22rem] lg:items-center dark:bg-zinc-900">
+        <div class="max-w-2xl">
+            <p class="eyebrow">{{ __('Kostenlos · ohne Konto · ohne Werbung') }}</p>
+            <h1 class="mt-6 text-4xl leading-[1.05] font-normal tracking-wide text-balance uppercase sm:text-6xl">{{ __('Den passenden Termin finden – ohne Hin und Her.') }}</h1>
+            <p class="mt-6 max-w-xl text-lg text-zinc-700 text-pretty dark:text-zinc-300">{{ __('Termine vorschlagen, Link teilen, alle kreuzen an. Du siehst sofort, wann es am besten passt.') }}</p>
             <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                <a href="{{ route('polls.create') }}" class="btn min-h-12 bg-white px-6 text-base text-brand-700 shadow-lg hover:bg-brand-50">
+                <a href="{{ route('polls.create') }}" class="btn-primary min-h-12 px-6 text-base">
                     <x-glyph name="plus" /> {{ __('Umfrage erstellen') }}
                 </a>
                 @guest
-                    <a href="{{ route('login') }}" class="btn min-h-12 px-6 text-base text-white ring-1 ring-white/40 hover:bg-white/10">{{ __('Anmelden (optional)') }}</a>
+                    <a href="{{ route('login') }}" class="btn-secondary min-h-12 px-6 text-base">{{ __('Anmelden (optional)') }}</a>
                 @endguest
             </div>
+        </div>
+
+        {{-- Illustration: how answers look, as colour cards --}}
+        <div class="hidden gap-3 lg:grid" aria-hidden="true">
+            @foreach ([
+                ['bg-sage', __('Ja'), [[__('Di, 2. Dez.'), '4'], [__('Do, 4. Dez.'), '3']]],
+                ['bg-blush', __('Wenn nötig'), [[__('Di, 2. Dez.'), '1'], [__('Do, 4. Dez.'), '2']]],
+                ['bg-zinc-200 dark:bg-zinc-300', __('Nein'), [[__('Di, 2. Dez.'), '0'], [__('Do, 4. Dez.'), '1']]],
+            ] as [$surface, $label, $rows])
+                <div class="{{ $surface }} rounded-2xl p-5 text-zinc-950">
+                    <p class="block border-b border-current pb-1.5 text-xs font-bold tracking-[.12em] uppercase">{{ $label }}</p>
+                    <dl class="mt-3 space-y-1 text-sm">
+                        @foreach ($rows as [$day, $count])
+                            <div class="flex justify-between"><dt class="font-semibold">{{ $day }}</dt><dd>{{ $count }}</dd></div>
+                        @endforeach
+                    </dl>
+                </div>
+            @endforeach
         </div>
     </section>
 
     <section class="mt-12 grid gap-4 sm:grid-cols-3">
         @foreach ([
-            ['calendar', __('1. Termine vorschlagen'), __('Tage oder Zeitfenster eintragen – in Sekunden, auch am Handy.')],
-            ['share', __('2. Link teilen'), __('Per Messenger oder Mail. Teilnehmende brauchen kein Konto.')],
-            ['star', __('3. Termin festlegen'), __('Die Übersicht zeigt den besten Termin. Ein Klick, und alle werden benachrichtigt.')],
-        ] as [$icon, $heading, $text])
+            ['calendar', 'bg-lavender', __('1. Termine vorschlagen'), __('Tage oder Zeitfenster eintragen – in Sekunden, auch am Handy.')],
+            ['share', 'bg-mist', __('2. Link teilen'), __('Per Messenger oder Mail. Teilnehmende brauchen kein Konto.')],
+            ['star', 'bg-blush', __('3. Termin festlegen'), __('Die Übersicht zeigt den besten Termin. Ein Klick, und alle werden benachrichtigt.')],
+        ] as [$icon, $surface, $heading, $text])
             <div class="card p-6">
-                <span class="grid size-10 place-items-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-900/50 dark:text-brand-300"><x-glyph :name="$icon" /></span>
-                <h2 class="mt-4 font-semibold">{{ $heading }}</h2>
-                <p class="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">{{ $text }}</p>
+                <span class="{{ $surface }} grid size-10 place-items-center rounded-xl text-zinc-950"><x-glyph :name="$icon" /></span>
+                <h2 class="mt-4 text-lg font-medium">{{ $heading }}</h2>
+                <p class="mt-1.5 text-zinc-600 dark:text-zinc-400">{{ $text }}</p>
             </div>
         @endforeach
     </section>
 
     <section class="mt-12 card flex flex-col items-start gap-6 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
         <div>
-            <h2 class="text-lg font-semibold">{{ __('Ja, Nein oder „Wenn nötig“') }}</h2>
-            <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{{ __('Drei klare Antworten statt endloser Nachrichten. Jede E-Mail-Adresse stimmt nur einmal ab.') }}</p>
+            <h2 class="text-xl font-medium">{{ __('Ja, Nein oder „Wenn nötig“') }}</h2>
+            <p class="mt-1 text-zinc-600 dark:text-zinc-400">{{ __('Drei klare Antworten statt endloser Nachrichten. Jede E-Mail-Adresse stimmt nur einmal ab.') }}</p>
         </div>
         <div class="flex gap-2">
             <span class="cell-yes inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium"><x-glyph name="check" class="size-4" />{{ __('Ja') }}</span>
