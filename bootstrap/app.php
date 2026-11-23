@@ -17,7 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(UseCloudflareClientIp::class);
         $middleware->append(SecurityHeaders::class);
-        $middleware->trustHosts();
+        // APP_URL host (and subdomains) plus localhost for the container health check (curl http://localhost:8080/up).
+        $middleware->trustHosts(at: ['^localhost$'], subdomains: true);
         $middleware->web(append: [EnsureNotBlocked::class]);
         $middleware->appendToGroup('web', 'throttle:global');
         $middleware->redirectGuestsTo(fn () => route('login'));

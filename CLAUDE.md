@@ -45,6 +45,7 @@ Rules that are easy to break:
 - Do not mix inline `@php(...)` with `@php … @endphp` blocks in one Blade file (compiles wrongly); use block form.
 - Our icon component is `<x-glyph>`; `<x-icon>` belongs to blade-icons (Filament).
 - Every new route needs a rate limiter; vendor routes outside `web` get `throttle:global` automatically (`AppServiceProvider`).
+- `trustHosts()` in `bootstrap/app.php` must keep trusting `localhost`: the container health check calls `http://localhost:8080/up`, and a 400 there takes the app offline (503 from Coolify). The middleware is skipped in tests, so `TrustedHostsTest` checks the patterns directly.
 - Tests do not carry cookies between requests; use `carryCookies()` from `tests/Pest.php`.
 
 ## Deviations from the standards
