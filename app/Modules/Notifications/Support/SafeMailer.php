@@ -32,7 +32,8 @@ final class SafeMailer
                     Mail::to($recipient)->send($mail);
                 } catch (Throwable $e) {
                     $failed++;
-                    Log::error('Notification mail failed.', ['context' => $context, 'poll_id' => $pollId, 'exception' => $e::class]);
+                    // The transport message (e.g. SMTP reply) is needed to diagnose; it never contains the mail body.
+                    Log::error('Notification mail failed.', ['context' => $context, 'poll_id' => $pollId, 'exception' => $e::class, 'message' => mb_substr((string) preg_replace('/[a-f0-9]{64}/i', '[redacted]', $e->getMessage()), 0, 500)]);
                 }
             }
 

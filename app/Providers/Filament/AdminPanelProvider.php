@@ -30,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName('Zeitfinder Admin')
             ->homeUrl('/')
+            ->favicon('/favicon.svg?v='.substr((string) md5_file(public_path('favicon.svg')), 0, 8))
             ->colors([
                 'primary' => Color::Stone,
             ])

@@ -6,9 +6,21 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#141112" media="(prefers-color-scheme: dark)">
-    <meta name="robots" content="{{ $robots ?? 'noindex' }}">
-    <title>{{ isset($title) ? $title.' · ' : '' }}Zeitfinder</title>
-    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    @php
+        $headContext = new \App\Support\Registries\PageContext(request()->route()?->getName(), $title ?? null, $robots ?? 'noindex');
+        $headParts = app(\App\Support\Registries\PageHeadRegistry::class)->all();
+        $faviconVersion = substr((string) md5_file(public_path('favicon.svg')), 0, 8);
+    @endphp
+    @forelse ($headParts as $part)
+        @include($part->view, ($part->data)($headContext))
+    @empty
+        <meta name="robots" content="{{ $headContext->robots }}">
+        <title>{{ $headContext->title !== null ? $headContext->title.' · ' : '' }}Zeitfinder</title>
+    @endforelse
+    {{-- Versioned: favicons are cached as immutable by nginx and Cloudflare. --}}
+    <link rel="icon" href="{{ asset('favicon.svg') }}?v={{ $faviconVersion }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('favicon.ico') }}?v={{ $faviconVersion }}" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}?v={{ $faviconVersion }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex min-h-full flex-col overflow-x-hidden">

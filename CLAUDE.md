@@ -29,14 +29,18 @@ Slash commands: `/login-audit` checks and hardens the login flow.
 
 ## Architecture
 
-- Modules in `app/Modules/{Accounts,Polls,Notifications}`, each with a service provider (registered in `bootstrap/providers.php`) and its own `routes.php`. Business logic in `Actions/`.
+- Modules in `app/Modules/{Accounts,Polls,Notifications,Seo}`, each with a service provider (registered in `bootstrap/providers.php`) and its own `routes.php`. Business logic in `Actions/`.
 - Modules interact **only** through registries in `app/Support/Registries`:
   - `DomainEventRegistry` – Polls publishes `PollCreated`, `ParticipantVoted`, `DuplicateVoteAttempted`, `PollFinalized`; Notifications listens. Polls must never send mail itself.
   - `AuthMethodRegistry` – login methods on `/anmelden`.
   - `DashboardSectionRegistry` – sections on `/konto`.
+  - `PageHeadRegistry` – `<head>` partials of the public layout (Seo renders title, description, canonical, Open Graph, JSON-LD).
+  - `SitemapRegistry` – public, indexable pages; feeds `sitemap.xml`, `llms.txt` and IndexNow. A new public page registers itself here and sets `robots="index,follow"`.
 - Shared kernel: `app/Models/User`, `ActivityLog`, `app/Support/*` (`Tokens`, `SafeRedirect`, `EmailAddress`, `DisplayTime`, `IcsCalendar`, `ActivityLogger`).
 - Admin: Filament panel `admin` in `app/Filament`, policies in `app/Policies` (registered in `AppServiceProvider`). Panel requires `is_admin` **and** a passkey-verified session (`EnsurePasskeySession`, flag set by a `PasskeyVerified` listener; magic-link/password sign-ins clear it).
 - Organizer and participant rights without account: encrypted cookies `zf_manage` / `zf_votes` via `Polls\Support\PollAccess`.
+
+SEO settings: single row `seo_settings` (`Seo\Models\SeoSetting::current()`), edited on the Filament page `app/Filament/Pages/SeoSettings.php`. `robots.txt` is a route, so there must be no `public/robots.txt`.
 
 Rules that are easy to break:
 
@@ -44,6 +48,7 @@ Rules that are easy to break:
 - Public pages must work under the strict nonce CSP: no inline scripts, no inline `style` attributes, no external resources. Use `resources/js/*` with `data-*` hooks.
 - Do not mix inline `@php(...)` with `@php … @endphp` blocks in one Blade file (compiles wrongly); use block form.
 - Design tokens live in `resources/css/app.css`: text, icons and primary buttons use `ink`/`paper` (black/white, inverted in dark mode); colour areas use the muted secondary palette (`sage`, `blush`, `lavender`, `mist`, …) with ink text on top; votes use `success`/`maybe`/`danger`; `zinc` is redefined as warm grey. No gradients or coloured shadows. Fonts are self-hosted via `@fontsource-variable` (Jost for headings, Source Sans 3 for text).
+- Favicons are linked with `?v=<hash>` (nginx and Cloudflare cache them as immutable); keep that when touching the layout.
 - Our icon component is `<x-glyph>`; `<x-icon>` belongs to blade-icons (Filament).
 - Every new route needs a rate limiter; vendor routes outside `web` get `throttle:global` automatically (`AppServiceProvider`).
 - `trustHosts()` in `bootstrap/app.php` must keep trusting `localhost`: the container health check calls `http://localhost:8080/up`, and a 400 there takes the app offline (503 from Coolify). The middleware is skipped in tests, so `TrustedHostsTest` checks the patterns directly.

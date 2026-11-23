@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Neue Umfrage')">
+<x-layouts.app :title="__('Neue Umfrage')" robots="index,follow">
     <div class="mx-auto max-w-3xl">
         <h1 class="text-3xl font-medium tracking-tight">{{ __('Neue Umfrage') }}</h1>
         <p class="mt-2 text-zinc-600 dark:text-zinc-400">{{ __('Schlage Termine vor und teile anschließend den Link.') }}</p>

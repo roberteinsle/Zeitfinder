@@ -7,6 +7,8 @@ use App\Modules\Polls\Models\Participant;
 use App\Modules\Polls\Models\Poll;
 use App\Support\Registries\DashboardSection;
 use App\Support\Registries\DashboardSectionRegistry;
+use App\Support\Registries\SitemapEntry;
+use App\Support\Registries\SitemapRegistry;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -14,7 +16,7 @@ use Illuminate\Support\ServiceProvider;
 
 class PollsServiceProvider extends ServiceProvider
 {
-    public function boot(DashboardSectionRegistry $dashboard): void
+    public function boot(DashboardSectionRegistry $dashboard, SitemapRegistry $sitemap): void
     {
         $this->loadRoutesFrom(__DIR__.'/routes.php');
 
@@ -25,6 +27,11 @@ class PollsServiceProvider extends ServiceProvider
         RateLimiter::for('vote', fn (Request $request) => Limit::perMinute(20)->by('vote:'.$request->ip()));
         RateLimiter::for('secret-links', fn (Request $request) => Limit::perMinute(20)->by('secret-links:'.$request->ip()));
         RateLimiter::for('poll-manage', fn (Request $request) => Limit::perMinute(60)->by('poll-manage:'.$request->ip()));
+
+        // Only the create page is public; polls themselves are never indexed.
+        $sitemap->register('polls', fn () => [
+            new SitemapEntry(route('polls.create'), __('Neue Umfrage'), __('Termine vorschlagen und eine Terminumfrage ohne Konto anlegen.'), 'monthly', 0.8),
+        ]);
 
         // The account page shows the user's polls through the dashboard registry.
         $dashboard->register(new DashboardSection(

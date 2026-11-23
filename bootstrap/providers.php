@@ -3,6 +3,7 @@
 use App\Modules\Accounts\AccountsServiceProvider;
 use App\Modules\Notifications\NotificationsServiceProvider;
 use App\Modules\Polls\PollsServiceProvider;
+use App\Modules\Seo\SeoServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
 
@@ -11,5 +12,6 @@ return [
     AccountsServiceProvider::class,
     PollsServiceProvider::class,
     NotificationsServiceProvider::class,
+    SeoServiceProvider::class,
     AdminPanelProvider::class,
 ];

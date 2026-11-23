@@ -37,7 +37,8 @@ final class RequestMagicLink
             // route() uses the forced root URL from APP_URL, never the request's Host header.
             Mail::to($email)->send(new MagicLinkMail(route('magic-link.show', ['token' => $plain]), $minutes));
         } catch (Throwable $e) {
-            Log::error('Magic link mail could not be sent.', ['exception' => $e::class]);
+            // The transport message (e.g. SMTP reply) never contains the mail body, so the token stays out of the log.
+            Log::error('Magic link mail could not be sent.', ['exception' => $e::class, 'message' => mb_substr((string) preg_replace('/[a-f0-9]{64}/i', '[redacted]', $e->getMessage()), 0, 500)]);
         }
     }
 }

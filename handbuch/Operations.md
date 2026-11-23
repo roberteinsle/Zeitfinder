@@ -28,6 +28,20 @@ The deploy webhook is triggered for pushes to the repository's default branch wh
 
 There is no queue worker: emails are sent right after the response (`defer()`), so pages stay fast. A failed mail is logged and recorded in the activity log, but never undoes the action.
 
+## Logs and errors
+
+In production the app logs to `stderr` (`LOG_CHANNEL=stderr` in `deploy/docker-compose.coolify.yml`). PHP-FPM forwards worker output to the container log (`catch_workers_output = yes` in the image), so everything shows up in Coolify under **Runtime Logs**:
+
+- unhandled exceptions with stack trace (visitors only see a generic error page, `APP_DEBUG=false`),
+- failed mails: `Magic link mail could not be sent.` or `Notification mail failed.` with the exception class and the transport message, e.g. the SMTP reply (`535 Authentication failed`, `Connection could not be established …`). Mail content and tokens are never logged,
+- failed or rejected IndexNow submissions.
+
+Failed notification mails and admin actions additionally appear in the admin area's activity log.
+
+## Favicons and caching
+
+Static files are served with `Cache-Control: immutable` for a year and cached by Cloudflare. The layout therefore links the favicons with a content hash (`favicon.svg?v=…`), so a changed icon shows up after the next deploy. Browsers that request `/favicon.ico` directly may keep the old file until it expires or the Cloudflare cache is purged for that URL.
+
 ## Cloudflare
 
 The app is public. Recommended:
@@ -41,7 +55,7 @@ Every response carries CSP, `X-Frame-Options: DENY`, `X-Content-Type-Options: no
 
 ## Rate limits
 
-Every route has a rate limit (baseline 300 requests per minute per IP). Stricter limits: poll creation 20/hour per IP and 100/day per user, voting 20/minute per IP, secret admin/edit links 20/minute per IP, management 60/minute per IP, plus the sign-in limits in [Accounts and Sign-in](Accounts-and-Sign-in). A poll accepts at most 500 participants.
+Every route has a rate limit (baseline 300 requests per minute per IP). Stricter limits: poll creation 20/hour per IP and 100/day per user, voting 20/minute per IP, secret admin/edit links 20/minute per IP, management 60/minute per IP, crawler files (`sitemap.xml`, `robots.txt`, `llms.txt`, IndexNow key) 60/minute per IP, IndexNow submissions at most one per 10 minutes, plus the sign-in limits in [Accounts and Sign-in](Accounts-and-Sign-in). A poll accepts at most 500 participants.
 
 ## Local development
 
@@ -59,5 +73,5 @@ With `MAIL_MAILER=log` the magic links appear in `storage/logs/laravel.log`.
 The GitHub wiki is generated from `handbuch/`:
 
 ```bash
-python3 scripts/build-wiki.py ../zeitfinder.wiki   # then commit and push the wiki repo
+python3 scripts/build-wiki.py ../Zeitfinder.wiki   # then commit and push the wiki repo
 ```

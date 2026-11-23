@@ -20,7 +20,8 @@ Flow for the first start: open `/anmelden`, request a magic link for the `ADMIN_
 
 - **Umfragen** – all polls with status, number of options and participants; view details, open the public page, delete.
 - **Benutzer** – all accounts with admin flag, passkeys, password+2FA status, last sign-in. Actions: edit name, block/unblock, grant/revoke admin rights, delete. You cannot block, demote or delete yourself. Accounts are only created by signing in.
-- **Aktivitätsprotokoll** – changes to domain data (polls created/updated/finalized/deleted, votes, sign-ins, admin actions, failed mails). Secrets such as tokens and passwords are never logged.
+- **SEO** – meta title and description, indexing switch, extra `robots.txt` rules, `llms.txt` introduction and IndexNow; see [SEO](SEO).
+- **Aktivitätsprotokoll** – changes to domain data (polls created/updated/finalized/deleted, votes, sign-ins, admin actions, SEO changes and IndexNow submissions, failed mails). Secrets such as tokens and passwords are never logged.
 
 ## Emergency: lost passkeys
 
