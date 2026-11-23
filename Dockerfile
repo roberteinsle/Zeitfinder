@@ -3,7 +3,7 @@
 ARG PHP_VERSION=8.5
 
 # --- Stufe 1: Frontend-Assets (Vite) ---
-FROM node:22-alpine AS assets
+FROM node:26-alpine AS assets
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
