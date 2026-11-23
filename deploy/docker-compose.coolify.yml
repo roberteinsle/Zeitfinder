@@ -1,0 +1,54 @@
+# deploy/docker-compose.coolify.yml
+# Wird von Hand in Coolify (Docker Compose Empty) eingefügt. Coolify liest diese Datei nicht aus dem Repo.
+# Nach Änderungen: committen, Inhalt in Coolify einfügen, speichern, Deploy.
+#
+# PostgreSQL läuft als eigenständige Coolify-Ressource (nicht in diesem Compose).
+# DB_HOST = interner Hostname dieser Ressource (Coolify → Postgres → "Postgres URL (internal)").
+services:
+  app:
+    # APP_IMAGE in Coolify setzen: ghcr.io/<github-account>/<repo>
+    image: ${APP_IMAGE}:${APP_TAG:-latest}
+    pull_policy: always
+    environment:
+      - APP_NAME=${APP_NAME}
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_KEY=${APP_KEY}
+      - APP_URL=${APP_URL}
+      - APP_LOCALE=${APP_LOCALE:-de}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - LOG_CHANNEL=stderr
+      - DB_CONNECTION=pgsql
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MAIL_MAILER=${MAIL_MAILER:-smtp}
+      - MAIL_HOST=${MAIL_HOST:-}
+      - MAIL_PORT=${MAIL_PORT:-587}
+      - MAIL_USERNAME=${MAIL_USERNAME:-}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-}
+      # Ohne Queue-Worker. Braucht die App Jobs oder Scheduler: QUEUE_CONNECTION=database
+      # und eigene Services "worker" (php artisan queue:work) bzw. "scheduler" (schedule:work) ergänzen.
+      - QUEUE_CONNECTION=sync
+      - SESSION_DRIVER=file
+      - CACHE_STORE=file
+    volumes:
+      - app-storage:/var/www/html/storage
+    networks:
+      - coolify
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+# Über dieses Netz erreicht die App den Datenbank-Service in Coolify.
+networks:
+  coolify:
+    external: true
+
+volumes:
+  app-storage:

@@ -1,0 +1,178 @@
+# .github/workflows/build.yml
+# Tests, Sicherheitsprüfungen, Image-Build nach GHCR. Siehe docs/STANDARDS.md → CI.
+name: Build & Push
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '17 4 * * 1'   # wöchentlich: neueste PHP-Patches und neue Schwachstellenmeldungen
+  workflow_dispatch:
+    inputs:
+      no_cache:
+        description: 'Ohne Cache bauen (Sicherheits-Update)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # Solange bin/init-laravel.sh noch nicht gelaufen ist, gibt es nichts zu testen oder zu bauen.
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      has_app: ${{ steps.app.outputs.has_app }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: app
+        run: |
+          if [ -f composer.json ]; then echo "has_app=true" >> "$GITHUB_OUTPUT"; else echo "has_app=false" >> "$GITHUB_OUTPUT"; fi
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test:
+    needs: check
+    if: needs.check.outputs.has_app == 'true'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: app_test
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U app"
+          --health-interval 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: intl, gd, zip, bcmath, exif, pdo_pgsql
+          coverage: none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: composer install --no-interaction --prefer-dist
+      - run: npm ci && npm run build
+
+      - name: Umgebung
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Code-Stil (Pint)
+        run: vendor/bin/pint --test
+
+      - name: Statische Analyse (Larastan)
+        run: vendor/bin/phpstan analyse --memory-limit=2G
+
+      # DB-Zugang: Host/Benutzer aus .env.example, Datenbank app_test aus phpunit.xml
+      - name: Tests (PostgreSQL)
+        run: vendor/bin/pest
+
+      - name: Bekannte Schwachstellen
+        run: |
+          composer audit
+          npm audit --omit=dev
+
+  build:
+    needs: [check, test, secrets]
+    if: needs.check.outputs.has_app == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-,format=short
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      - id: sha
+        run: echo "short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      # Erst lokal bauen und prüfen, dann pushen
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          pull: true                      # Base-Image immer frisch (neuester PHP-Patch)
+          no-cache: ${{ inputs.no_cache == true }}
+          build-args: |
+            GIT_SHA=${{ steps.sha.outputs.short }}
+          tags: local/app:check
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: PHP-Version im Image ausgeben
+        run: docker run --rm --entrypoint php local/app:check -v
+
+      - name: Frontend-Bundle auf Schlüssel prüfen
+        run: |
+          id=$(docker create local/app:check)
+          docker cp "$id:/var/www/html/public/build" ./bundle-check
+          docker rm "$id"
+          if grep -rEi "sk-[a-z0-9]|api[_-]?key|secret" ./bundle-check; then
+            echo "::error::Möglicher Schlüssel im Frontend-Bundle gefunden"
+            exit 1
+          fi
+
+      - name: Image-Scan (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: local/app:check
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '1'
+
+      - uses: docker/build-push-action@v6
+        if: github.event_name != 'pull_request'
+        with:
+          context: .
+          push: true
+          build-args: |
+            GIT_SHA=${{ steps.sha.outputs.short }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+
+      # Optional: Coolify nach erfolgreichem Push anstoßen (Repo-Variable AUTO_DEPLOY=true,
+      # Secrets COOLIFY_WEBHOOK und COOLIFY_TOKEN). Sonst in Coolify von Hand auf Deploy klicken.
+      - name: Coolify-Deploy auslösen
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.AUTO_DEPLOY == 'true'
+        run: |
+          curl -fsS -X POST "${{ secrets.COOLIFY_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"
