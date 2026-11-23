@@ -19,11 +19,11 @@
         {{-- Illustration: how answers look, as colour cards --}}
         <div class="hidden gap-3 lg:grid" aria-hidden="true">
             @foreach ([
-                ['bg-sage', __('Ja'), [[__('Di, 2. Dez.'), '4'], [__('Do, 4. Dez.'), '3']]],
-                ['bg-blush', __('Wenn nötig'), [[__('Di, 2. Dez.'), '1'], [__('Do, 4. Dez.'), '2']]],
+                ['bg-eucalyptus', __('Ja'), [[__('Di, 2. Dez.'), '4'], [__('Do, 4. Dez.'), '3']]],
+                ['bg-peach', __('Wenn nötig'), [[__('Di, 2. Dez.'), '1'], [__('Do, 4. Dez.'), '2']]],
                 ['bg-zinc-200 dark:bg-zinc-300', __('Nein'), [[__('Di, 2. Dez.'), '0'], [__('Do, 4. Dez.'), '1']]],
             ] as [$surface, $label, $rows])
-                <div class="{{ $surface }} rounded-2xl p-5 text-zinc-950">
+                <div class="{{ $surface }} rounded-2xl p-5 text-night">
                     <p class="block border-b border-current pb-1.5 text-xs font-bold tracking-[.12em] uppercase">{{ $label }}</p>
                     <dl class="mt-3 space-y-1 text-sm">
                         @foreach ($rows as [$day, $count])
@@ -37,12 +37,12 @@
 
     <section class="mt-12 grid gap-4 sm:grid-cols-3">
         @foreach ([
-            ['calendar', 'bg-lavender', __('1. Termine vorschlagen'), __('Tage oder Zeitfenster eintragen – in Sekunden, auch am Handy.')],
-            ['share', 'bg-mist', __('2. Link teilen'), __('Per Messenger oder Mail. Teilnehmende brauchen kein Konto.')],
-            ['star', 'bg-blush', __('3. Termin festlegen'), __('Die Übersicht zeigt den besten Termin. Ein Klick, und alle werden benachrichtigt.')],
+            ['calendar', 'bg-aqua', __('1. Termine vorschlagen'), __('Tage oder Zeitfenster eintragen – in Sekunden, auch am Handy.')],
+            ['share', 'bg-periwinkle', __('2. Link teilen'), __('Per Messenger oder Mail. Teilnehmende brauchen kein Konto.')],
+            ['star', 'bg-peach', __('3. Termin festlegen'), __('Die Übersicht zeigt den besten Termin. Ein Klick, und alle werden benachrichtigt.')],
         ] as [$icon, $surface, $heading, $text])
             <div class="card p-6">
-                <span class="{{ $surface }} grid size-10 place-items-center rounded-xl text-zinc-950"><x-glyph :name="$icon" /></span>
+                <span class="{{ $surface }} grid size-10 place-items-center rounded-xl text-night"><x-glyph :name="$icon" /></span>
                 <h2 class="mt-4 text-lg font-medium">{{ $heading }}</h2>
                 <p class="mt-1.5 text-zinc-600 dark:text-zinc-400">{{ $text }}</p>
             </div>

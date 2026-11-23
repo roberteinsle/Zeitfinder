@@ -31,11 +31,11 @@
 
     {{-- Final date --}}
     @if ($poll->isFinalized() && $poll->finalOption)
-        <section class="mt-8 overflow-hidden rounded-2xl bg-sage p-6 text-zinc-950 sm:p-8">
+        <section class="mt-8 overflow-hidden rounded-2xl bg-eucalyptus p-6 text-night sm:p-8">
             <p class="eyebrow">{{ __('Der Termin steht fest') }}</p>
             <p class="mt-3 font-display text-2xl font-medium sm:text-3xl">{{ DisplayTime::longDate($poll->finalOption->starts_at) }}</p>
             <p class="mt-1 text-lg">{{ $poll->finalOption->timeLabel() }}</p>
-            <a href="{{ route('polls.calendar', $poll) }}" class="btn mt-5 bg-zinc-950 text-white hover:bg-zinc-800"><x-glyph name="download" class="size-4" />{{ __('In den Kalender') }}</a>
+            <a href="{{ route('polls.calendar', $poll) }}" class="btn mt-5 bg-night text-white hover:bg-night/85"><x-glyph name="download" class="size-4" />{{ __('In den Kalender') }}</a>
         </section>
     @elseif ($participantCount > 0 && $results->bestOptionIds !== [])
         {{-- Best options so far --}}

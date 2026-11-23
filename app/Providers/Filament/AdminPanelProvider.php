@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->homeUrl('/')
             ->favicon('/favicon.svg?v='.substr((string) md5_file(public_path('favicon.svg')), 0, 8))
             ->colors([
-                'primary' => Color::Stone,
+                'primary' => Color::hex('#1d2433'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

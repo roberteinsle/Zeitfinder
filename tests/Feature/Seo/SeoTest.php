@@ -208,6 +208,6 @@ it('serves versioned, real favicons', function () {
 
     expect($html)->toMatch('/favicon\.svg\?v=[a-f0-9]{8}/')
         ->toContain('apple-touch-icon.png?v=');
-    expect(file_get_contents(public_path('favicon.svg')))->toContain('fill="#000000"');
+    expect(file_get_contents(public_path('favicon.svg')))->toContain('fill="#1d2433"');
     expect(filesize(public_path('favicon.ico')))->toBeGreaterThan(0);
 });
