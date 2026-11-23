@@ -36,7 +36,7 @@ Slash commands: `/login-audit` checks and hardens the login flow.
   - `DashboardSectionRegistry` – sections on `/konto`.
   - `PageHeadRegistry` – `<head>` partials of the public layout (Seo renders title, description, canonical, Open Graph, JSON-LD).
   - `SitemapRegistry` – public, indexable pages; feeds `sitemap.xml`, `llms.txt` and IndexNow. A new public page registers itself here and sets `robots="index,follow"`.
-- Shared kernel: `app/Models/User`, `ActivityLog`, `app/Support/*` (`Tokens`, `SafeRedirect`, `EmailAddress`, `DisplayTime`, `IcsCalendar`, `ActivityLogger`).
+- Shared kernel: `app/Models/User`, `ActivityLog`, `app/Support/*` (`Tokens`, `SafeRedirect`, `EmailAddress`, `DisplayTime`, `IcsCalendar`, `ActivityLogger`, `MailDelivery`).
 - Admin: Filament panel `admin` in `app/Filament`, policies in `app/Policies` (registered in `AppServiceProvider`). Panel requires `is_admin` **and** a passkey-verified session (`EnsurePasskeySession`, flag set by a `PasskeyVerified` listener; magic-link/password sign-ins clear it).
 - Organizer and participant rights without account: encrypted cookies `zf_manage` / `zf_votes` via `Polls\Support\PollAccess`.
 
@@ -44,6 +44,7 @@ SEO settings: single row `seo_settings` (`Seo\Models\SeoSetting::current()`), ed
 
 Rules that are easy to break:
 
+- Send mail through `App\Support\MailDelivery` (`canDeliver()`, `sent()`, `failed()`), so every mail leaves a log line and the `log`/`array` mailers are refused in production (they would write tokens into the log).
 - Links in mails come from `route()` with the forced root URL (`APP_URL`); never build URLs from the request host.
 - Public pages must work under the strict nonce CSP: no inline scripts, no inline `style` attributes, no external resources. Use `resources/js/*` with `data-*` hooks.
 - Do not mix inline `@php(...)` with `@php … @endphp` blocks in one Blade file (compiles wrongly); use block form.

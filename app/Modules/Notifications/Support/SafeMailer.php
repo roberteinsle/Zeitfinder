@@ -3,8 +3,8 @@
 namespace App\Modules\Notifications\Support;
 
 use App\Support\ActivityLogger;
+use App\Support\MailDelivery;
 use Illuminate\Contracts\Mail\Mailable;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
@@ -14,7 +14,10 @@ use Throwable;
  */
 final class SafeMailer
 {
-    public function __construct(private readonly ActivityLogger $activity) {}
+    public function __construct(
+        private readonly ActivityLogger $activity,
+        private readonly MailDelivery $delivery,
+    ) {}
 
     /**
      * @param  array<string, Mailable>  $mails  recipient => mailable
@@ -26,14 +29,19 @@ final class SafeMailer
         }
 
         defer(function () use ($mails, $context, $pollId) {
+            if (! $this->delivery->canDeliver($context)) {
+                $this->activity->log('mail.failed', null, ['context' => $context, 'poll_id' => $pollId, 'failed' => count($mails), 'total' => count($mails)]);
+
+                return;
+            }
+
             $failed = 0;
             foreach ($mails as $recipient => $mail) {
                 try {
-                    Mail::to($recipient)->send($mail);
+                    $this->delivery->sent($context, $recipient, Mail::to($recipient)->send($mail));
                 } catch (Throwable $e) {
                     $failed++;
-                    // The transport message (e.g. SMTP reply) is needed to diagnose; it never contains the mail body.
-                    Log::error('Notification mail failed.', ['context' => $context, 'poll_id' => $pollId, 'exception' => $e::class, 'message' => mb_substr((string) preg_replace('/[a-f0-9]{64}/i', '[redacted]', $e->getMessage()), 0, 500)]);
+                    $this->delivery->failed('Notification mail failed.', $e, ['context' => $context, 'poll_id' => $pollId]);
                 }
             }
 

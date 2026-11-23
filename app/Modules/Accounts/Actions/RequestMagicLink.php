@@ -4,9 +4,9 @@ namespace App\Modules\Accounts\Actions;
 
 use App\Modules\Accounts\Mail\MagicLinkMail;
 use App\Modules\Accounts\Models\MagicLink;
+use App\Support\MailDelivery;
 use App\Support\Tokens;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
@@ -17,6 +17,8 @@ use Throwable;
  */
 final class RequestMagicLink
 {
+    public function __construct(private readonly MailDelivery $delivery) {}
+
     public function __invoke(string $email): void
     {
         $minutes = (int) config('zeitfinder.magic_link_ttl_minutes', 15);
@@ -33,12 +35,16 @@ final class RequestMagicLink
             ]);
         });
 
+        if (! $this->delivery->canDeliver('magic_link')) {
+            return;
+        }
+
         try {
             // route() uses the forced root URL from APP_URL, never the request's Host header.
-            Mail::to($email)->send(new MagicLinkMail(route('magic-link.show', ['token' => $plain]), $minutes));
+            $sent = Mail::to($email)->send(new MagicLinkMail(route('magic-link.show', ['token' => $plain]), $minutes));
+            $this->delivery->sent('magic_link', $email, $sent);
         } catch (Throwable $e) {
-            // The transport message (e.g. SMTP reply) never contains the mail body, so the token stays out of the log.
-            Log::error('Magic link mail could not be sent.', ['exception' => $e::class, 'message' => mb_substr((string) preg_replace('/[a-f0-9]{64}/i', '[redacted]', $e->getMessage()), 0, 500)]);
+            $this->delivery->failed('Magic link mail could not be sent.', $e);
         }
     }
 }

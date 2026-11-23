@@ -28,6 +28,10 @@ A password exists only together with a TOTP code (authenticator app).
 
 Signing in: email + password, then the 6-digit code. A code can be used only once. Password login can be disabled at any time.
 
+## No magic link arrives?
+
+Check the runtime log (see [Operations](Operations#logs-and-errors)): `Mail sent.` means the mail server accepted the mail – look in the spam folder and at the sender domain's SPF/DKIM/DMARC records. `Magic link mail could not be sent.` shows the SMTP error. `Mail is not configured` means `MAIL_MAILER` is not `smtp`. No line at all means the request did not reach the app (rate limit, invalid address).
+
 ## Limits
 
 To protect against abuse, sign-in requests are rate-limited:

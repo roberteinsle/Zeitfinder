@@ -33,7 +33,9 @@ There is no queue worker: emails are sent right after the response (`defer()`), 
 In production the app logs to `stderr` (`LOG_CHANNEL=stderr` in `deploy/docker-compose.coolify.yml`). PHP-FPM forwards worker output to the container log (`catch_workers_output = yes` in the image), so everything shows up in Coolify under **Runtime Logs**:
 
 - unhandled exceptions with stack trace (visitors only see a generic error page, `APP_DEBUG=false`),
+- every mail that the mail server accepted: `Mail sent.` with the kind of mail (`magic_link`, `poll.created`, …), the mailer, the masked recipient (`e***@example.com`) and the message id assigned by the server. If such a line exists but the mail never arrived, the problem is delivery (spam folder, SPF/DKIM/DMARC of `MAIL_FROM_ADDRESS`), not the app – search your mail provider's logs for the message id,
 - failed mails: `Magic link mail could not be sent.` or `Notification mail failed.` with the exception class and the transport message, e.g. the SMTP reply (`535 Authentication failed`, `Connection could not be established …`). Mail content and tokens are never logged,
+- `Mail is not configured, nothing was sent.` when `MAIL_MAILER` is `log` or `array` in production. The app refuses these mailers there, because they deliver nothing and would write sign-in links into the log,
 - failed or rejected IndexNow submissions.
 
 Failed notification mails and admin actions additionally appear in the admin area's activity log.

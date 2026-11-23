@@ -11,7 +11,7 @@ Code lives in modules under `app/Modules`, each with its own service provider an
 | `Notifications` | All emails about polls (admin link, vote receipt/edit link, new vote, final date with `.ics`). |
 | `Seo` | SEO settings (single row `seo_settings`), head tags, `sitemap.xml`, `robots.txt`, `llms.txt`, IndexNow. |
 
-Shared kernel (`app/Support`, `app/Models`): `User`, `ActivityLog`, `ActivityLogger`, `Tokens`, `SafeRedirect`, `EmailAddress`, `DisplayTime`, `IcsCalendar`.
+Shared kernel (`app/Support`, `app/Models`): `User`, `ActivityLog`, `ActivityLogger`, `MailDelivery`, `Tokens`, `SafeRedirect`, `EmailAddress`, `DisplayTime`, `IcsCalendar`.
 
 Business logic lives in actions (`Modules/*/Actions`); controllers, Filament resources and models only call them.
 
