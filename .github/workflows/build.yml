@@ -125,7 +125,7 @@ jobs:
         run: echo "short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
       # Erst lokal bauen und prüfen, dann pushen
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: .
           load: true
@@ -158,7 +158,7 @@ jobs:
           ignore-unfixed: true
           exit-code: '1'
 
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         if: github.event_name != 'pull_request'
         with:
           context: .
