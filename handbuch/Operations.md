@@ -22,7 +22,7 @@ All environment-specific values come from Coolify environment variables. Only `.
 
 ## Deployment
 
-GitHub Actions runs tests (PostgreSQL), Pint, Larastan, `composer audit`, `npm audit`, Gitleaks, builds the image, scans it with Trivy and pushes it to GHCR. Coolify only pulls the image (`deploy/docker-compose.coolify.yml`). Migrations run at container start. Rollback: set `APP_TAG` to a `sha-…` tag and redeploy.
+GitHub Actions runs tests (PostgreSQL), Pint, Larastan, `composer audit`, `npm audit`, Gitleaks, builds the image, scans it with Trivy and pushes it to GHCR. Coolify only pulls the image (`deploy/docker-compose.coolify.yml`). Migrations run at container start. Filament's CSS/JS are not in the repository; the Docker build publishes them with `php artisan filament:assets`, and CI fails if they are missing from the image (otherwise `/admin` renders unstyled). Rollback: set `APP_TAG` to a `sha-…` tag and redeploy.
 
 The deploy webhook is triggered for pushes to the repository's default branch when the repository variable `AUTO_DEPLOY=true` and the secrets `COOLIFY_WEBHOOK` and `COOLIFY_TOKEN` are set.
 

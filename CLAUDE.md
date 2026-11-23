@@ -49,6 +49,7 @@ Rules that are easy to break:
 - Public pages must work under the strict nonce CSP: no inline scripts, no inline `style` attributes, no external resources. Use `resources/js/*` with `data-*` hooks.
 - Do not mix inline `@php(...)` with `@php … @endphp` blocks in one Blade file (compiles wrongly); use block form.
 - Design tokens live in `resources/css/app.css`: text, icons and primary buttons use `ink`/`paper` (black/white, inverted in dark mode); colour areas use the muted secondary palette (`sage`, `blush`, `lavender`, `mist`, …) with ink text on top; votes use `success`/`maybe`/`danger`; `zinc` is redefined as warm grey. No gradients or coloured shadows. Fonts are self-hosted via `@fontsource-variable` (Jost for headings, Source Sans 3 for text).
+- The Docker build runs Composer with `--no-scripts`, so anything normally done by composer scripts (e.g. `filament:assets`) must be an explicit step in the `Dockerfile`; CI checks that Filament's assets are in the image.
 - Favicons are linked with `?v=<hash>` (nginx and Cloudflare cache them as immutable); keep that when touching the layout.
 - Our icon component is `<x-glyph>`; `<x-icon>` belongs to blade-icons (Filament).
 - Every new route needs a rate limiter; vendor routes outside `web` get `throttle:global` automatically (`AppServiceProvider`).

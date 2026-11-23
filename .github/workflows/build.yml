@@ -140,6 +140,9 @@ jobs:
       - name: PHP-Version im Image ausgeben
         run: docker run --rm --entrypoint php local/app:check -v
 
+      - name: Filament-Assets im Image prüfen
+        run: docker run --rm --entrypoint sh local/app:check -c 'test -f public/css/filament/filament/app.css && test -f public/js/filament/filament/app.js'
+
       - name: Frontend-Bundle auf Schlüssel prüfen
         run: |
           id=$(docker create local/app:check)

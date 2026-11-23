@@ -23,6 +23,14 @@ COPY . .
 # --no-scripts: kein artisan beim Build (Dateien gehören root, der Build läuft als www-data);
 # das Package-Manifest erzeugt Laravel beim Start bzw. AUTORUN optimize
 RUN composer dump-autoload --optimize --no-dev --no-scripts
+# Filament's CSS/JS/fonts are gitignored and normally published by "filament:upgrade" in the
+# skipped composer scripts. Publish them explicitly (as root, the copied files belong to root),
+# then drop the build-time package manifest again so the runtime builds its own.
+USER root
+RUN php artisan filament:assets --no-interaction \
+    && test -f public/css/filament/filament/app.css \
+    && rm -f bootstrap/cache/packages.php bootstrap/cache/services.php
+USER www-data
 
 # --- Stufe 3: Runtime ---
 FROM serversideup/php:${PHP_VERSION}-fpm-nginx-alpine
