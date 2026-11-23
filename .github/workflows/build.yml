@@ -151,7 +151,7 @@ jobs:
           fi
 
       - name: Image-Scan (Trivy)
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: local/app:check
           severity: CRITICAL,HIGH
@@ -174,5 +174,5 @@ jobs:
       - name: Coolify-Deploy auslösen
         if: github.ref_name == github.event.repository.default_branch && github.event_name != 'pull_request' && vars.AUTO_DEPLOY == 'true'
         run: |
-          curl -fsS -X POST "${{ secrets.COOLIFY_WEBHOOK }}" \
+          curl -fsS --connect-timeout 10 --max-time 60 -X POST "${{ secrets.COOLIFY_WEBHOOK }}" \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"
