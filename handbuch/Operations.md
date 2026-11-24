@@ -14,6 +14,7 @@ All environment-specific values come from Coolify environment variables. Only `.
 | `APP_KEY` | Encryption key. Never change it in production (encrypted TOTP secrets and cookies depend on it). |
 | `ADMIN_EMAIL` | First administrator. |
 | `BEHIND_CLOUDFLARE` | `true` only if the server accepts web traffic exclusively via Cloudflare. The real visitor IP is then taken from `CF-Connecting-IP` for rate limits and logs. |
+| `CREDIT_NAME`, `CREDIT_URL`, `CREDIT_PLACE` | Optional. Credit line in the middle of the footer ("Made with ♥️ in *place* by *name*"); the name links to the URL (only `https://`). Without a name the line is hidden. Add the variables to the compose file in Coolify as well. |
 | `DB_*` | PostgreSQL (separate Coolify resource, reached via the `coolify` network). |
 | `MAIL_*` | SMTP for magic links and notifications. `MAIL_FROM_ADDRESS` must be set. |
 | `PASSKEYS_USER_HANDLE_SECRET` | Optional; defaults to `APP_KEY`. |

@@ -18,6 +18,9 @@ services:
       - APP_LOCALE=${APP_LOCALE:-de}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - BEHIND_CLOUDFLARE=${BEHIND_CLOUDFLARE:-false}
+      - CREDIT_NAME=${CREDIT_NAME:-}
+      - CREDIT_URL=${CREDIT_URL:-}
+      - CREDIT_PLACE=${CREDIT_PLACE:-}
       - SESSION_SECURE_COOKIE=true
       - LOG_CHANNEL=stderr
       - DB_CONNECTION=pgsql

@@ -57,9 +57,10 @@
     </main>
 
     <footer class="hidden border-t border-zinc-200/70 py-8 text-sm text-zinc-500 sm:block dark:border-zinc-800">
-        <div class="mx-auto flex max-w-6xl items-center justify-between px-6">
+        <div class="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-6">
             <span>Zeitfinder</span>
-            <a href="{{ route('privacy') }}" class="hover:text-zinc-800 dark:hover:text-zinc-200">{{ __('Datenschutz') }}</a>
+            <x-credit />
+            <a href="{{ route('privacy') }}" class="col-start-3 justify-self-end hover:text-zinc-800 dark:hover:text-zinc-200">{{ __('Datenschutz') }}</a>
         </div>
     </footer>
 

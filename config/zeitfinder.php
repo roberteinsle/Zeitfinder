@@ -16,4 +16,12 @@ return [
 
     'max_options_per_poll' => 60,
 
+    // Credit line in the footer ("Made with ♥ in <place> by <name>"). Personal data:
+    // set it in the environment only. Without a name the line is not shown.
+    'credit' => [
+        'name' => env('CREDIT_NAME'),
+        'url' => env('CREDIT_URL'),
+        'place' => env('CREDIT_PLACE'),
+    ],
+
 ];

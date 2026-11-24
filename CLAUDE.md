@@ -50,6 +50,7 @@ Rules that are easy to break:
 - Do not mix inline `@php(...)` with `@php … @endphp` blocks in one Blade file (compiles wrongly); use block form.
 - Design tokens live in `resources/css/app.css`: text, icons and primary buttons use `ink`/`paper` (night blue `#1d2433` / white, inverted in dark mode); text on light colour areas uses the fixed `night`. Colour areas use the muted accent palette (`eucalyptus`, `apricot`, `peach`, `aqua`, `foam`, `periwinkle`, `cornflower`); highlights use `brand` (aqua); votes use `success`/`maybe`/`danger`; `zinc` is redefined as sand grey. Keep the palette our own – do not copy a third-party brand palette. No gradients or coloured shadows. Fonts are self-hosted via `@fontsource-variable` (Jost for headings, Source Sans 3 for text).
 - The Docker build runs Composer with `--no-scripts`, so anything normally done by composer scripts (e.g. `filament:assets`) must be an explicit step in the `Dockerfile`; CI checks that Filament's assets are in the image.
+- The footer credit (`<x-credit>`) holds personal data: values come only from `CREDIT_NAME`, `CREDIT_URL`, `CREDIT_PLACE`, never from the repository.
 - Favicons are linked with `?v=<hash>` (nginx and Cloudflare cache them as immutable); keep that when touching the layout.
 - Our icon component is `<x-glyph>`; `<x-icon>` belongs to blade-icons (Filament).
 - Every new route needs a rate limiter; vendor routes outside `web` get `throttle:global` automatically (`AppServiceProvider`).
