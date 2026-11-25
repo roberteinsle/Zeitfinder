@@ -52,15 +52,20 @@
         </div>
     </header>
 
-    <main id="inhalt" class="mx-auto w-full min-w-0 max-w-6xl flex-1 px-4 pt-6 pb-28 sm:px-6 sm:pt-10 sm:pb-16">
+    <main id="inhalt" class="mx-auto w-full min-w-0 max-w-6xl flex-1 px-4 pt-6 pb-12 sm:px-6 sm:pt-10 sm:pb-16">
         {{ $slot }}
     </main>
 
-    <footer class="hidden border-t border-zinc-200/70 py-8 text-sm text-zinc-500 sm:block dark:border-zinc-800">
-        <div class="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-6">
-            <span>Zeitfinder</span>
+    {{-- On phones the bottom padding keeps the footer above the fixed tab bar. --}}
+    <footer class="border-t border-zinc-200/70 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))] text-sm text-zinc-500 sm:py-6 dark:border-zinc-800">
+        <div class="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:gap-4 sm:px-6">
+            <span class="hidden sm:block">Zeitfinder</span>
             <x-credit />
-            <a href="{{ route('privacy') }}" class="col-start-3 justify-self-end hover:text-zinc-800 dark:hover:text-zinc-200">{{ __('Datenschutz') }}</a>
+            <nav class="order-first flex gap-5 sm:order-none sm:col-start-3 sm:justify-self-end" aria-label="{{ __('Rechtliches') }}">
+                @foreach (app(\App\Support\Registries\FooterLinkRegistry::class)->visible() as $label => $url)
+                    <a href="{{ $url }}" class="inline-flex min-h-11 items-center hover:text-zinc-800 dark:hover:text-zinc-200">{{ $label }}</a>
+                @endforeach
+            </nav>
         </div>
     </footer>
 

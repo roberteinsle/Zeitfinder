@@ -12,7 +12,7 @@ The shared standards above apply in full. This file only lists what is added or 
 - UI language: German. Documentation (`handbuch/`, wiki, README, this file): **English**.
 - Reachability: public; admin area `/admin` behind Cloudflare Access.
 - Deploy: automatic via webhook (`AUTO_DEPLOY=true`) for pushes to the default branch.
-- Queue and scheduler: none (`QUEUE_CONNECTION=sync`); mails are sent after the response via `defer()`.
+- Queue and scheduler: none (`QUEUE_CONNECTION=sync`); mails are sent after the response via `defer()`. Daily clean-up is triggered by the health check `/up` (`App\Support\Maintenance`).
 
 ## Commands
 
@@ -21,6 +21,7 @@ php artisan serve          # app (plus: npm run dev)
 vendor/bin/pest            # tests (PostgreSQL, database app_test)
 vendor/bin/pint            # code style
 vendor/bin/phpstan analyse # static analysis
+php artisan zeitfinder:maintenance # delete outdated data now
 php artisan zeitfinder:reset-passkeys <email>   # emergency: remove all passkeys of an account
 python3 scripts/build-wiki.py ../Zeitfinder.wiki # regenerate the wiki from handbuch/
 ```
@@ -29,18 +30,22 @@ Slash commands: `/login-audit` checks and hardens the login flow.
 
 ## Architecture
 
-- Modules in `app/Modules/{Accounts,Polls,Notifications,Seo}`, each with a service provider (registered in `bootstrap/providers.php`) and its own `routes.php`. Business logic in `Actions/`.
+- Modules in `app/Modules/{Accounts,Polls,Notifications,Seo,Legal}`, each with a service provider (registered in `bootstrap/providers.php`) and its own `routes.php`. Business logic in `Actions/`.
 - Modules interact **only** through registries in `app/Support/Registries`:
   - `DomainEventRegistry` – Polls publishes `PollCreated`, `ParticipantVoted`, `DuplicateVoteAttempted`, `PollFinalized`; Notifications listens. Polls must never send mail itself.
   - `AuthMethodRegistry` – login methods on `/anmelden`.
   - `DashboardSectionRegistry` – sections on `/konto`.
   - `PageHeadRegistry` – `<head>` partials of the public layout (Seo renders title, description, canonical, Open Graph, JSON-LD).
   - `SitemapRegistry` – public, indexable pages; feeds `sitemap.xml`, `llms.txt` and IndexNow. A new public page registers itself here and sets `robots="index,follow"`.
-- Shared kernel: `app/Models/User`, `ActivityLog`, `app/Support/*` (`Tokens`, `SafeRedirect`, `EmailAddress`, `Crawlers`, `DisplayTime`, `IcsCalendar`, `ActivityLogger`, `MailDelivery`).
+  - `FooterLinkRegistry` – footer links (Legal: imprint, privacy notice).
+  - `MaintenanceRegistry` – daily clean-up tasks; a module that stores personal data registers its deletion here.
+- Shared kernel: `app/Models/User`, `ActivityLog`, `app/Support/*` (`Tokens`, `SafeRedirect`, `EmailAddress`, `Crawlers`, `DisplayTime`, `IcsCalendar`, `ActivityLogger`, `MailDelivery`, `Maintenance`).
 - Admin: Filament panel `admin` in `app/Filament`, policies in `app/Policies` (registered in `AppServiceProvider`). Panel requires `is_admin` **and** a passkey-verified session (`EnsurePasskeySession`, flag set by a `PasskeyVerified` listener; magic-link/password sign-ins clear it).
 - Organizer and participant rights without account: encrypted cookies `zf_manage` / `zf_votes` via `Polls\Support\PollAccess`.
 
 SEO settings: single row `seo_settings` (`Seo\Models\SeoSetting::current()`), edited on the Filament page `app/Filament/Pages/SeoSettings.php`. `robots.txt` is a route, so there must be no `public/robots.txt`.
+
+Legal settings: single row `legal_settings`, Filament page `app/Filament/Pages/LegalSettings.php`.
 
 Rules that are easy to break:
 
@@ -53,6 +58,7 @@ Rules that are easy to break:
 - The footer credit (`<x-credit>`) holds personal data: values come only from `CREDIT_NAME`, `CREDIT_URL`, `CREDIT_PLACE`, never from the repository.
 - Poll pages (`/u/…`) are private: routes below `/u/` belong in the group with `KeepOutCrawlers` (403 for known crawlers, `X-Robots-Tag`). The crawler list is `App\Support\Crawlers` (also used by `robots.txt`).
 - Participant email addresses are never shown to anybody, including the organizer (UI and privacy page promise this); do not add them to views, mails to others, exports or calendar files.
+- The privacy notice (`resources/views/legal/privacy.blade.php`) must match the code: adapt it when a feature changes which personal data is stored, shown, passed on or how long it is kept. The footer must stay visible on phones (imprint must always be reachable). Operator, hoster and provider details belong into the database, never into the repository.
 - Favicons are linked with `?v=<hash>` (nginx and Cloudflare cache them as immutable); keep that when touching the layout.
 - Our icon component is `<x-glyph>`; `<x-icon>` belongs to blade-icons (Filament).
 - Every new route needs a rate limiter; vendor routes outside `web` get `throttle:global` automatically (`AppServiceProvider`).

@@ -16,6 +16,10 @@ return [
 
     'max_options_per_poll' => 60,
 
+    // Polls are deleted this many months after their last date, activity log entries after the
+    // same time. The privacy page states this number.
+    'retention_months' => 6,
+
     // Credit line in the footer ("Made with ♥ in <place> by <name>"). Personal data:
     // set it in the environment only. Without a name the line is not shown.
     'credit' => [

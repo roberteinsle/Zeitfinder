@@ -12,7 +12,7 @@ Only these pages may be indexed:
 | New poll | `/neu` |
 | Privacy | `/datenschutz` |
 
-Polls (`/u/…`), sign-in, account and admin pages are always `noindex`, never appear in the sitemap and are disallowed in `robots.txt`. Poll links stay private even when someone shares them publicly.
+Polls (`/u/…`), sign-in, account, imprint and admin pages are always `noindex`, never appear in the sitemap and are disallowed in `robots.txt`. Poll links stay private even when someone shares them publicly.
 
 ## Protection of poll pages
 

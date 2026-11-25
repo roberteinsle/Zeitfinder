@@ -5,10 +5,12 @@ namespace App\Modules\Accounts;
 use App\Models\User;
 use App\Modules\Accounts\Console\ResetPasskeysCommand;
 use App\Modules\Accounts\Http\Middleware\EnsurePasskeySession;
+use App\Modules\Accounts\Models\MagicLink;
 use App\Modules\Accounts\Support\AdminBootstrap;
 use App\Support\EmailAddress;
 use App\Support\Registries\AuthMethod;
 use App\Support\Registries\AuthMethodRegistry;
+use App\Support\Registries\MaintenanceRegistry;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -23,7 +25,7 @@ use Laravel\Passkeys\Passkeys;
 
 class AccountsServiceProvider extends ServiceProvider
 {
-    public function boot(AuthMethodRegistry $authMethods): void
+    public function boot(AuthMethodRegistry $authMethods, MaintenanceRegistry $maintenance): void
     {
         $this->loadRoutesFrom(__DIR__.'/routes.php');
 
@@ -34,6 +36,9 @@ class AccountsServiceProvider extends ServiceProvider
         $authMethods->register(new AuthMethod('magic_link', 'accounts.methods.magic-link', 10));
         $authMethods->register(new AuthMethod('passkey', 'accounts.methods.passkey', 20));
         $authMethods->register(new AuthMethod('password', 'accounts.methods.password', 30));
+
+        // Used or expired links are worthless but still contain the address.
+        $maintenance->register('magic_links', fn () => MagicLink::query()->where('expires_at', '<', now())->delete());
 
         $this->registerRateLimiters();
         $this->registerAuthHooks();

@@ -3,10 +3,12 @@
 namespace App\Modules\Polls;
 
 use App\Models\User;
+use App\Modules\Polls\Actions\PruneOldPolls;
 use App\Modules\Polls\Models\Participant;
 use App\Modules\Polls\Models\Poll;
 use App\Support\Registries\DashboardSection;
 use App\Support\Registries\DashboardSectionRegistry;
+use App\Support\Registries\MaintenanceRegistry;
 use App\Support\Registries\SitemapEntry;
 use App\Support\Registries\SitemapRegistry;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -16,7 +18,7 @@ use Illuminate\Support\ServiceProvider;
 
 class PollsServiceProvider extends ServiceProvider
 {
-    public function boot(DashboardSectionRegistry $dashboard, SitemapRegistry $sitemap): void
+    public function boot(DashboardSectionRegistry $dashboard, SitemapRegistry $sitemap, MaintenanceRegistry $maintenance): void
     {
         $this->loadRoutesFrom(__DIR__.'/routes.php');
 
@@ -27,6 +29,8 @@ class PollsServiceProvider extends ServiceProvider
         RateLimiter::for('vote', fn (Request $request) => Limit::perMinute(20)->by('vote:'.$request->ip()));
         RateLimiter::for('secret-links', fn (Request $request) => Limit::perMinute(20)->by('secret-links:'.$request->ip()));
         RateLimiter::for('poll-manage', fn (Request $request) => Limit::perMinute(60)->by('poll-manage:'.$request->ip()));
+
+        $maintenance->register('polls', fn () => app(PruneOldPolls::class)());
 
         // Only the create page is public; polls themselves are never indexed.
         $sitemap->register('polls', fn () => [

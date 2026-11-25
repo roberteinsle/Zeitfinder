@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Accounts\AccountsServiceProvider;
+use App\Modules\Legal\LegalServiceProvider;
 use App\Modules\Notifications\NotificationsServiceProvider;
 use App\Modules\Polls\PollsServiceProvider;
 use App\Modules\Seo\SeoServiceProvider;
@@ -13,5 +14,6 @@ return [
     PollsServiceProvider::class,
     NotificationsServiceProvider::class,
     SeoServiceProvider::class,
+    LegalServiceProvider::class,
     AdminPanelProvider::class,
 ];

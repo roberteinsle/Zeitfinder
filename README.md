@@ -9,7 +9,7 @@ A fast, mobile-friendly scheduling poll app: propose dates, share a link, everyo
 3. `php artisan serve` and in a second terminal `npm run dev`
 4. Tests: `vendor/bin/pest` (PostgreSQL, database `app_test`)
 
-SEO (meta tags, sitemap, robots.txt, llms.txt, Schema.org, IndexNow) is managed in the admin area under `/admin/seo`.
+Imprint and privacy details are entered in the admin area under `/admin/rechtliches`. SEO (meta tags, sitemap, robots.txt, llms.txt, Schema.org, IndexNow) is managed in the admin area under `/admin/seo`.
 
 Details are in the handbook (`handbuch/`, source of the wiki).
 
