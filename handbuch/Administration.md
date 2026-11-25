@@ -16,6 +16,12 @@ Set the environment variable `ADMIN_EMAIL`. When an account with this address si
 
 Flow for the first start: open `/anmelden`, request a magic link for the `ADMIN_EMAIL` address, open it, then open `/admin` and register your passkey.
 
+## Dashboard
+
+Key figures: open polls, new polls, participations and fixed dates of the last 30 days, accounts, and failed notification mails of the last 30 days (red when there are any; sign-in mails are only in the runtime log). Totals shrink when old polls are deleted automatically.
+
+**Zurück zu Zeitfinder** in the navigation leads to the public site; sign out through the menu at the top right. Avatars are initials generated locally, no external service is involved.
+
 ## Sections
 
 - **Umfragen** – all polls with status, number of options and participants; view details, open the public page, delete.

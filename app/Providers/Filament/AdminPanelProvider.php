@@ -2,17 +2,19 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\LocalAvatarProvider;
 use App\Modules\Accounts\Http\Middleware\EnsureNotBlocked;
 use App\Modules\Accounts\Http\Middleware\EnsurePasskeySession;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -31,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('Zeitfinder Admin')
             ->homeUrl('/')
             ->favicon('/favicon.svg?v='.substr((string) md5_file(public_path('favicon.svg')), 0, 8))
+            ->defaultAvatarProvider(LocalAvatarProvider::class)
             ->colors([
                 'primary' => Color::hex('#1d2433'),
             ])
@@ -39,10 +42,15 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
-            ->widgets([
-                AccountWidget::class,
+            ->navigationItems([
+                // Directly below the dashboard (sort -2).
+                NavigationItem::make('back-to-site')
+                    ->label(fn (): string => __('Zurück zu Zeitfinder'))
+                    ->icon(Heroicon::OutlinedArrowUturnLeft)
+                    ->url(fn (): string => route('home'))
+                    ->sort(-1),
             ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

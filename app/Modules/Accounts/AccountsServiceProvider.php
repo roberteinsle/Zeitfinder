@@ -8,6 +8,8 @@ use App\Modules\Accounts\Http\Middleware\EnsurePasskeySession;
 use App\Modules\Accounts\Models\MagicLink;
 use App\Modules\Accounts\Support\AdminBootstrap;
 use App\Support\EmailAddress;
+use App\Support\Registries\AdminStat;
+use App\Support\Registries\AdminStatRegistry;
 use App\Support\Registries\AuthMethod;
 use App\Support\Registries\AuthMethodRegistry;
 use App\Support\Registries\MaintenanceRegistry;
@@ -25,7 +27,7 @@ use Laravel\Passkeys\Passkeys;
 
 class AccountsServiceProvider extends ServiceProvider
 {
-    public function boot(AuthMethodRegistry $authMethods, MaintenanceRegistry $maintenance): void
+    public function boot(AuthMethodRegistry $authMethods, MaintenanceRegistry $maintenance, AdminStatRegistry $stats): void
     {
         $this->loadRoutesFrom(__DIR__.'/routes.php');
 
@@ -36,6 +38,11 @@ class AccountsServiceProvider extends ServiceProvider
         $authMethods->register(new AuthMethod('magic_link', 'accounts.methods.magic-link', 10));
         $authMethods->register(new AuthMethod('passkey', 'accounts.methods.passkey', 20));
         $authMethods->register(new AuthMethod('password', 'accounts.methods.password', 30));
+
+        $stats->register(new AdminStat('accounts.users', __('Benutzer'),
+            fn () => User::query()->count(),
+            fn () => __(':count neu in den letzten 30 Tagen', ['count' => User::query()->where('created_at', '>=', now()->subDays(30))->count()]),
+            order: 50));
 
         // Used or expired links are worthless but still contain the address.
         $maintenance->register('magic_links', fn () => MagicLink::query()->where('expires_at', '<', now())->delete());

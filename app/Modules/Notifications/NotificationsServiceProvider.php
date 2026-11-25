@@ -2,6 +2,7 @@
 
 namespace App\Modules\Notifications;
 
+use App\Models\ActivityLog;
 use App\Modules\Notifications\Mail\FinalDateMail;
 use App\Modules\Notifications\Mail\NewVoteMail;
 use App\Modules\Notifications\Mail\PollCreatedMail;
@@ -12,6 +13,8 @@ use App\Modules\Polls\Events\ParticipantVoted;
 use App\Modules\Polls\Events\PollCreated;
 use App\Modules\Polls\Events\PollFinalized;
 use App\Support\IcsCalendar;
+use App\Support\Registries\AdminStat;
+use App\Support\Registries\AdminStatRegistry;
 use App\Support\Registries\DomainEventRegistry;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,8 +24,13 @@ use Illuminate\Support\ServiceProvider;
  */
 class NotificationsServiceProvider extends ServiceProvider
 {
-    public function boot(DomainEventRegistry $events): void
+    public function boot(DomainEventRegistry $events, AdminStatRegistry $stats): void
     {
+        $stats->register(new AdminStat('notifications.failed', __('Fehlgeschlagene Mails'),
+            fn () => (int) ActivityLog::query()->where('action', 'mail.failed')->where('created_at', '>=', now()->subDays(30))
+                ->get()->sum(fn (ActivityLog $log) => (int) ($log->properties['failed'] ?? 0)),
+            fn () => __('Benachrichtigungen, letzte 30 Tage'), warnAboveZero: true, order: 60));
+
         $events->listen(PollCreated::class, function (PollCreated $event) {
             $poll = $event->poll;
             $this->mailer()->sendLater([

@@ -39,6 +39,7 @@ Slash commands: `/login-audit` checks and hardens the login flow.
   - `SitemapRegistry` – public, indexable pages; feeds `sitemap.xml`, `llms.txt` and IndexNow. A new public page registers itself here and sets `robots="index,follow"`.
   - `FooterLinkRegistry` – footer links (Legal: imprint, privacy notice).
   - `MaintenanceRegistry` – daily clean-up tasks; a module that stores personal data registers its deletion here.
+  - `AdminStatRegistry` – key figures on the admin dashboard (totals only).
 - Shared kernel: `app/Models/User`, `ActivityLog`, `app/Support/*` (`Tokens`, `SafeRedirect`, `EmailAddress`, `Crawlers`, `DisplayTime`, `IcsCalendar`, `ActivityLogger`, `MailDelivery`, `Maintenance`).
 - Admin: Filament panel `admin` in `app/Filament`, policies in `app/Policies` (registered in `AppServiceProvider`). Panel requires `is_admin` **and** a passkey-verified session (`EnsurePasskeySession`, flag set by a `PasskeyVerified` listener; magic-link/password sign-ins clear it).
 - Organizer and participant rights without account: encrypted cookies `zf_manage` / `zf_votes` via `Polls\Support\PollAccess`.
@@ -59,6 +60,7 @@ Rules that are easy to break:
 - Poll pages (`/u/…`) are private: routes below `/u/` belong in the group with `KeepOutCrawlers` (403 for known crawlers, `X-Robots-Tag`). The crawler list is `App\Support\Crawlers` (also used by `robots.txt`).
 - Participant email addresses are never shown to anybody, including the organizer (UI and privacy page promise this); do not add them to views, mails to others, exports or calendar files.
 - The privacy notice (`resources/views/legal/privacy.blade.php`) must match the code: adapt it when a feature changes which personal data is stored, shown, passed on or how long it is kept. The footer must stay visible on phones (imprint must always be reachable). Operator, hoster and provider details belong into the database, never into the repository.
+- No external resources in the admin area either: Filament defaults such as `ui-avatars.com` are blocked by the CSP (avatars come from `App\Filament\LocalAvatarProvider`).
 - Favicons are linked with `?v=<hash>` (nginx and Cloudflare cache them as immutable); keep that when touching the layout.
 - Our icon component is `<x-glyph>`; `<x-icon>` belongs to blade-icons (Filament).
 - Every new route needs a rate limiter; vendor routes outside `web` get `throttle:global` automatically (`AppServiceProvider`).

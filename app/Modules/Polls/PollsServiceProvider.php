@@ -4,8 +4,11 @@ namespace App\Modules\Polls;
 
 use App\Models\User;
 use App\Modules\Polls\Actions\PruneOldPolls;
+use App\Modules\Polls\Enums\PollStatus;
 use App\Modules\Polls\Models\Participant;
 use App\Modules\Polls\Models\Poll;
+use App\Support\Registries\AdminStat;
+use App\Support\Registries\AdminStatRegistry;
 use App\Support\Registries\DashboardSection;
 use App\Support\Registries\DashboardSectionRegistry;
 use App\Support\Registries\MaintenanceRegistry;
@@ -18,7 +21,7 @@ use Illuminate\Support\ServiceProvider;
 
 class PollsServiceProvider extends ServiceProvider
 {
-    public function boot(DashboardSectionRegistry $dashboard, SitemapRegistry $sitemap, MaintenanceRegistry $maintenance): void
+    public function boot(DashboardSectionRegistry $dashboard, SitemapRegistry $sitemap, MaintenanceRegistry $maintenance, AdminStatRegistry $stats): void
     {
         $this->loadRoutesFrom(__DIR__.'/routes.php');
 
@@ -29,6 +32,21 @@ class PollsServiceProvider extends ServiceProvider
         RateLimiter::for('vote', fn (Request $request) => Limit::perMinute(20)->by('vote:'.$request->ip()));
         RateLimiter::for('secret-links', fn (Request $request) => Limit::perMinute(20)->by('secret-links:'.$request->ip()));
         RateLimiter::for('poll-manage', fn (Request $request) => Limit::perMinute(60)->by('poll-manage:'.$request->ip()));
+
+        $recent = fn () => now()->subDays(30);
+        $stats->register(new AdminStat('polls.open', __('Offene Umfragen'),
+            fn () => Poll::query()->where('status', PollStatus::Open)->count(),
+            fn () => __('von :count insgesamt', ['count' => Poll::query()->count()]),
+            order: 10));
+        $stats->register(new AdminStat('polls.new', __('Neue Umfragen'),
+            fn () => Poll::query()->where('created_at', '>=', $recent())->count(),
+            fn () => __('in den letzten 30 Tagen'), order: 20));
+        $stats->register(new AdminStat('polls.votes', __('Teilnahmen'),
+            fn () => Participant::query()->where('created_at', '>=', $recent())->count(),
+            fn () => __('in den letzten 30 Tagen'), order: 30));
+        $stats->register(new AdminStat('polls.finalized', __('Festgelegte Termine'),
+            fn () => Poll::query()->where('status', PollStatus::Finalized)->where('finalized_at', '>=', $recent())->count(),
+            fn () => __('in den letzten 30 Tagen'), order: 40));
 
         $maintenance->register('polls', fn () => app(PruneOldPolls::class)());
 

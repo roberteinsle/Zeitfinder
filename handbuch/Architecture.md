@@ -27,6 +27,7 @@ Modules never call each other's internals. They connect only through registries 
 - **`SitemapRegistry`** – public, indexable pages (`SitemapEntry`: URL, title, description, change frequency, priority). The app registers the home page, the Legal module the privacy notice, the Polls module the create page. The Seo module builds the sitemap, `llms.txt` and the IndexNow submission from it without knowing the other modules.
 
 - **`FooterLinkRegistry`** – links in the footer; the Legal module contributes imprint and privacy notice.
+- **`AdminStatRegistry`** – key figures on the admin dashboard (totals only, no personal data); Polls, Accounts and Notifications contribute theirs.
 - **`MaintenanceRegistry`** – daily clean-up tasks; Polls deletes old polls, Accounts expired sign-in links, the app old activity log entries. `App\Support\Maintenance` runs them, triggered by the health check.
 
 A new feature registers itself in the relevant registry in its service provider.

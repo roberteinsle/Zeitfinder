@@ -13,6 +13,7 @@ use App\Policies\PollPolicy;
 use App\Policies\SeoSettingPolicy;
 use App\Policies\UserPolicy;
 use App\Support\Maintenance;
+use App\Support\Registries\AdminStatRegistry;
 use App\Support\Registries\AuthMethodRegistry;
 use App\Support\Registries\DashboardSectionRegistry;
 use App\Support\Registries\DomainEventRegistry;
@@ -45,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(SitemapRegistry::class);
         $this->app->singleton(FooterLinkRegistry::class);
         $this->app->singleton(MaintenanceRegistry::class);
+        $this->app->singleton(AdminStatRegistry::class);
     }
 
     public function boot(SitemapRegistry $sitemap, MaintenanceRegistry $maintenance): void
