@@ -85,7 +85,7 @@
                     <div>
                         <label for="name" class="label">{{ __('Dein Name') }}</label>
                         <input id="name" name="name" type="text" maxlength="80" required autocomplete="name"
-                               value="{{ old('name', $me?->name ?? auth()->user()?->name) }}" class="input @error('name') input-error @enderror">
+                               value="{{ old('name', $me?->name ?? auth()->user()?->displayNameForOthers()) }}" class="input @error('name') input-error @enderror">
                         <x-field-error name="name" />
                     </div>
                     @if (! $me)
@@ -93,6 +93,7 @@
                             <div>
                                 <span class="label">{{ __('E-Mail') }}</span>
                                 <p class="flex min-h-11 items-center text-sm text-zinc-600 dark:text-zinc-400">{{ auth()->user()->email }}</p>
+                                @include('polls.partials.email-hint')
                             </div>
                         @else
                             <div>
@@ -100,7 +101,7 @@
                                 <input id="email" name="email" type="email" maxlength="255" required autocomplete="email"
                                        value="{{ old('email') }}" class="input @error('email') input-error @enderror">
                                 <x-field-error name="email" />
-                                <p class="mt-1.5 text-xs text-zinc-500">{{ __('Nur für die Organisation sichtbar. Damit niemand doppelt abstimmt und du deine Antwort später ändern kannst.') }}</p>
+                                @include('polls.partials.email-hint')
                             </div>
                         @endauth
                     @endif

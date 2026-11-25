@@ -23,7 +23,7 @@ Signed-in organizers can manage their polls from **Konto** without the admin lin
 ## Answering (participants)
 
 1. Open the shared link. No account is needed.
-2. Enter your name and email. The email is only visible to the organizer. It ensures that every address votes only once and lets you change your answer later.
+2. Enter your name and email. The email is used by the system only: neither the organizer nor other participants ever see it. It ensures that every address votes only once, lets you change your answer later and is used to tell you the final date.
 3. Tap **Ja**, **Wenn nötig** or **Nein** for each option. **Alle Ja** / **Alle Nein** set every option at once. Unanswered options count as *No*.
 4. Click **Antwort senden**.
 
@@ -42,10 +42,10 @@ Open the admin link or, when signed in, **Verwalten** on the poll page (`/u/<id>
 
 - **Finalen Termin festlegen** – options are sorted by approvals; pick one and confirm. The poll closes for voting and **all participants and the organizer get an email with the date and an `.ics` calendar file**. The poll page shows the final date with an **In den Kalender** button.
 - **Abstimmung wieder öffnen** – withdraw the final date and allow voting again (no emails are sent).
-- **Teilnehmende** – see names and emails; remove entries.
+- **Teilnehmende** – see names; remove entries. Email addresses are not shown.
 - **Umfrage bearbeiten** – change title, location, description and the options above, remove proposals (their answers are deleted) or add new ones. The final option cannot be removed; at least one option must remain.
 - **Umfrage löschen** – deletes the poll with all answers, irreversibly.
 
 ## Privacy
 
-Participant emails are never shown publicly. No external fonts, scripts, trackers or ads are loaded. Cookies are used only for sign-in and to remember your own answer and organizer rights in this browser.
+Participant emails are never shown to anybody, not even the organizer; only the operator of the site has technical access to the database. An address is deleted together with the participant's entry or the poll. The voting form does not prefill the account name while it is still the automatic one (the part of the address before the `@`). Poll pages are closed to search engines and AI crawlers (see [SEO](SEO)). No external fonts, scripts, trackers or ads are loaded. Cookies are used only for sign-in and to remember your own answer and organizer rights in this browser.

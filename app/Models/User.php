@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Laravel\Passkeys\Contracts\PasskeyUser;
 use Laravel\Passkeys\PasskeyAuthenticatable;
 
@@ -68,5 +69,14 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
     public function hasPasswordLogin(): bool
     {
         return $this->password !== null && $this->two_factor_confirmed_at !== null;
+    }
+
+    /**
+     * Name to suggest where others will see it. New accounts are named after the local part
+     * of the address; that must not be published without the user choosing it.
+     */
+    public function displayNameForOthers(): ?string
+    {
+        return mb_strtolower($this->name) === mb_strtolower(Str::limit(Str::before($this->email, '@'), 80, '')) ? null : $this->name;
     }
 }

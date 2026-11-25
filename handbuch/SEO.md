@@ -14,6 +14,16 @@ Only these pages may be indexed:
 
 Polls (`/u/…`), sign-in, account and admin pages are always `noindex`, never appear in the sitemap and are disallowed in `robots.txt`. Poll links stay private even when someone shares them publicly.
 
+## Protection of poll pages
+
+Everything below `/u/` (poll, results, management, `.ics` file) is kept away from search engines and AI models in three layers:
+
+1. `robots.txt` disallows `/u/` for everybody and additionally names every known search, AI and SEO crawler (some, like `AdsBot-Google`, ignore the general rule).
+2. Every response, including errors and the calendar file, carries `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai`; the pages also contain a `noindex` meta tag.
+3. Requests whose User-Agent belongs to a known crawler (list in `app/Support/Crawlers.php`, including assistants such as `ChatGPT-User` or `Claude-User`) get a plain `403` before the poll is loaded.
+
+Limits: crawlers that disguise themselves as a normal browser cannot be recognised this way; Cloudflare's bot protection can help there. A search engine may also list the bare address of a poll (without content) if somebody publishes the link. Link previews of messengers (WhatsApp, Teams, Slack …) are not blocked, so shared links still show the poll's title. This protection does not depend on the SEO settings and cannot be switched off there.
+
 ## Settings (admin area → SEO)
 
 | Field | Used for |

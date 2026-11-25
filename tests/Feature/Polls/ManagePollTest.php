@@ -152,12 +152,12 @@ it('removes a participant, but only of its own poll', function () {
     expect(Participant::query()->pluck('id')->all())->toBe([$foreign->id]);
 });
 
-it('shows participant emails to the organizer', function () {
+it('never shows participant emails to the organizer', function () {
     [$poll, $token] = createPoll();
     app(SubmitVote::class)->create($poll, 'Max', 'max@example.com', []);
     grantManage($poll, $token);
 
-    $this->get("/u/{$poll->public_id}/verwalten")->assertSee('max@example.com');
+    $this->get("/u/{$poll->public_id}/verwalten")->assertSee('Max')->assertDontSee('max@example.com');
 });
 
 it('deletes the poll', function () {

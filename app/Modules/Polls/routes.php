@@ -4,6 +4,7 @@ use App\Modules\Polls\Http\Controllers\CalendarController;
 use App\Modules\Polls\Http\Controllers\ManageController;
 use App\Modules\Polls\Http\Controllers\PollController;
 use App\Modules\Polls\Http\Controllers\VoteController;
+use App\Modules\Polls\Http\Middleware\KeepOutCrawlers;
 use App\Support\Tokens;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +14,11 @@ Route::middleware('web')->group(function () {
 
     Route::get('/neu', [PollController::class, 'create'])->name('polls.create');
     Route::post('/neu', [PollController::class, 'store'])->middleware('throttle:poll-create')->name('polls.store');
+});
 
+// Everything below /u/ is private to the people who have the link: no crawlers, never indexed.
+// Outermost middleware, so it runs before session and database and also marks error responses.
+Route::middleware([KeepOutCrawlers::class, 'web'])->group(function () {
     Route::get('/u/{poll}', [PollController::class, 'show'])->name('polls.show');
     Route::get('/u/{poll}/bereit', [PollController::class, 'created'])->name('polls.created');
     Route::get('/u/{poll}/termin.ics', CalendarController::class)->name('polls.calendar');

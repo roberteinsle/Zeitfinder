@@ -36,7 +36,7 @@ Slash commands: `/login-audit` checks and hardens the login flow.
   - `DashboardSectionRegistry` – sections on `/konto`.
   - `PageHeadRegistry` – `<head>` partials of the public layout (Seo renders title, description, canonical, Open Graph, JSON-LD).
   - `SitemapRegistry` – public, indexable pages; feeds `sitemap.xml`, `llms.txt` and IndexNow. A new public page registers itself here and sets `robots="index,follow"`.
-- Shared kernel: `app/Models/User`, `ActivityLog`, `app/Support/*` (`Tokens`, `SafeRedirect`, `EmailAddress`, `DisplayTime`, `IcsCalendar`, `ActivityLogger`, `MailDelivery`).
+- Shared kernel: `app/Models/User`, `ActivityLog`, `app/Support/*` (`Tokens`, `SafeRedirect`, `EmailAddress`, `Crawlers`, `DisplayTime`, `IcsCalendar`, `ActivityLogger`, `MailDelivery`).
 - Admin: Filament panel `admin` in `app/Filament`, policies in `app/Policies` (registered in `AppServiceProvider`). Panel requires `is_admin` **and** a passkey-verified session (`EnsurePasskeySession`, flag set by a `PasskeyVerified` listener; magic-link/password sign-ins clear it).
 - Organizer and participant rights without account: encrypted cookies `zf_manage` / `zf_votes` via `Polls\Support\PollAccess`.
 
@@ -51,6 +51,8 @@ Rules that are easy to break:
 - Design tokens live in `resources/css/app.css`: text, icons and primary buttons use `ink`/`paper` (night blue `#1d2433` / white, inverted in dark mode); text on light colour areas uses the fixed `night`. Colour areas use the muted accent palette (`eucalyptus`, `apricot`, `peach`, `aqua`, `foam`, `periwinkle`, `cornflower`); highlights use `brand` (aqua); votes use `success`/`maybe`/`danger`; `zinc` is redefined as sand grey. Keep the palette our own – do not copy a third-party brand palette. No gradients or coloured shadows. Fonts are self-hosted via `@fontsource-variable` (Jost for headings, Source Sans 3 for text).
 - The Docker build runs Composer with `--no-scripts`, so anything normally done by composer scripts (e.g. `filament:assets`) must be an explicit step in the `Dockerfile`; CI checks that Filament's assets are in the image.
 - The footer credit (`<x-credit>`) holds personal data: values come only from `CREDIT_NAME`, `CREDIT_URL`, `CREDIT_PLACE`, never from the repository.
+- Poll pages (`/u/…`) are private: routes below `/u/` belong in the group with `KeepOutCrawlers` (403 for known crawlers, `X-Robots-Tag`). The crawler list is `App\Support\Crawlers` (also used by `robots.txt`).
+- Participant email addresses are never shown to anybody, including the organizer (UI and privacy page promise this); do not add them to views, mails to others, exports or calendar files.
 - Favicons are linked with `?v=<hash>` (nginx and Cloudflare cache them as immutable); keep that when touching the layout.
 - Our icon component is `<x-glyph>`; `<x-icon>` belongs to blade-icons (Filament).
 - Every new route needs a rate limiter; vendor routes outside `web` get `throttle:global` automatically (`AppServiceProvider`).

@@ -70,10 +70,7 @@
                 <ul class="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
                     @foreach ($poll->participants as $participant)
                         <li class="flex items-center justify-between gap-3 py-2.5">
-                            <div class="min-w-0">
-                                <p class="truncate font-medium">{{ $participant->name }}</p>
-                                <p class="truncate text-sm text-zinc-500">{{ $participant->email }}</p>
-                            </div>
+                            <p class="min-w-0 truncate font-medium">{{ $participant->name }}</p>
                             <form method="POST" action="{{ route('polls.participants.destroy', [$poll, $participant]) }}" data-confirm="{{ __(':name entfernen?', ['name' => $participant->name]) }}">
                                 @csrf @method('DELETE')
                                 <button class="btn-ghost size-10 p-0 text-zinc-400 hover:text-danger-600" title="{{ __('Entfernen') }}"><x-glyph name="trash" class="size-4" /><span class="sr-only">{{ __('Entfernen') }}</span></button>
